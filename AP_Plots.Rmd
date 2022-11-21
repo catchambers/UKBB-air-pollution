@@ -1,0 +1,162 @@
+---
+title: "Air Pollution and Lung Cancer - Plots"
+author: "Caitlyn Chitwood"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library("survival")
+```
+
+```{r infile, include=FALSE}
+df <- readRDS("C:/Users/Caitlyn/Box/Research/air_pollution/Datasets/pollution.rds")
+
+attach(df)
+```
+
+```{r summary, include=FALSE}
+lungcancer <- table(lung_cancer)
+```
+
+There are `r lungcancer[2]` cases of lungcancer in the data set.
+
+```{r histogram, echo=FALSE}
+hist(pm25_2010, 
+     main="Particulate matter air pollution (pm2.5) 2010",
+     xlab="PM2.5 (μg/m3)",
+     col="cadetblue",
+     freq=FALSE,
+     ylim=c(0,0.7))
+
+#Plot lognormal distribution
+xfit <- seq(min(pm25_2010), max(pm25_2010), length=40)
+yfit <- dlnorm(xfit,meanlog=log(mean(pm25_2010)), sdlog=log(sd(pm25_2010)))
+lines(xfit, yfit, col="black", lwd=2)
+
+```
+
+The distribution is right-skewed and appears to be a log normal distribution.
+
+```{r histogram2, echo=FALSE}
+par(mfrow=c(3,3))
+hist(pm10_2007, 
+     xlab="pm10_2007 (μg/m3)",
+     col="cadetblue",
+     freq=FALSE)
+
+hist(pm10_2010, 
+     xlab="pm10_2010 (μg/m3)",
+     col="cadetblue",
+     freq=FALSE)
+
+hist(pmcourse_2010, 
+     xlab="pmcourse_2010 (μg/m3)",
+     col="cadetblue",
+     freq=FALSE)
+
+hist(no2_2005, 
+     xlab="no2_2005 (μg/m3)",
+     col="cadetblue",
+     freq=FALSE)
+
+hist(no2_2006, 
+     xlab="no2_2006 (μg/m3)",
+     col="cadetblue",
+     freq=FALSE)
+
+hist(no2_2007, 
+     xlab="no2_2007 (μg/m3)",
+     col="cadetblue",
+     freq=FALSE)
+
+hist(no2_2010, 
+     xlab="no2_2010 (μg/m3)",
+     col="cadetblue",
+     freq=FALSE)
+
+hist(no1_2010, 
+     xlab="no1_2010 (μg/m3)",
+     col="cadetblue",
+     freq=FALSE)
+
+hist(pm25_2010, 
+     xlab="PM2.5 (μg/m3)",
+     col="cadetblue",
+     freq=FALSE)
+```
+
+```{r scatterplot PM10 NO2, echo=FALSE}
+plot(pm10_2010, 
+     no2_2010, 
+     )
+cor(pm10_2010, no2_2010, method="pearson", use="complete.obs")
+cor(pm10_2010, no2_2010, method="spearman", use="complete.obs")
+```
+
+```{r scatterplot PM10 PM2.5, echo=FALSE}
+plot(pm10_2010, 
+     pm25_2010 
+     )
+cor(pm10_2010, pm25_2010, method="pearson", use="complete.obs")
+cor(pm10_2010, pm25_2010, method="spearman", use="complete.obs")
+```
+```{r scatterplot NO1 NO2, echo=FALSE}
+plot(no1_2010, 
+     no2_2010, 
+     )
+cor(no1_2010, no2_2010, method="pearson", use="complete.obs")
+cor(no1_2010, no2_2010, m=ethod="spearman", use="complete.obs")
+```
+
+```{r boxplot, echo=FALSE}
+quantile(pm25_2010)
+iqr <- IQR(pm25_2010)
+
+boxplot(pm25_2010, 
+        horizontal=TRUE,
+        col="cadetblue")
+```
+
+```{r qqplot}
+qqnorm(pm25_2010)
+qqline(pm25_2010)
+```
+
+```{r correlation}
+cor(pm25_2010, ageBaseline)
+cor(pm25_2010, exposeSmokeHome)
+cor(pm25_2010, bmi, use="complete.obs")
+cor(pm25_2010, packYear, use="complete.obs")
+```
+
+
+```{r outliers}
+extremeOut <- 3*iqr
+mildOut <- 1.5*iqr
+
+extremePM25 <- subset(df, pm25_2010 > (mean(pm25_2010)+ extremeOut))
+mildPM25 <- subset(df, pm25_2010 > (mean(pm25_2010)+ mildOut))
+```
+
+There are `r length(extremePM25)` extreme outliers and `r length(mildPM25)` mild outliers for PM2.5 2010.
+
+```{r correlation mild}
+attach(extremePM25)
+cor(pm25_2010, ageBaseline)
+cor(pm25_2010, exposeSmokeHome)
+cor(pm25_2010, bmi, use="complete.obs")
+cor(pm25_2010, packYear, use="complete.obs")
+detach(extremePM25)
+```
+
+```{r correlation extreme}
+attach(mildPM25)
+cor(pm25_2010, dt_Lung)
+cor(pm25_2010, ageBaseline)
+cor(pm25_2010, exposeSmokeHome)
+cor(pm25_2010, bmi, use="complete.obs")
+cor(pm25_2010, packYear, use="complete.obs")
+detach(mildPM25)
+```
