@@ -1,26 +1,3 @@
-##Data downloaded from UKBB:
-# Participant ID
-# Townsend deprivation index at recruitment
-# Body mass index (BMI) | Instance 0
-# Average total household income before tax | Instance 0
-# Date of attending assessment centre | Instance 0
-# Particulate matter air pollution (pm10); 2007
-# Particulate matter air pollution (pm10); 2010
-# Particulate matter air pollution (pm2.5) absorbance; 2010
-# Particulate matter air pollution (pm2.5); 2010
-# Particulate matter air pollution 2.5-10um; 2010
-# Nitrogen dioxide air pollution; 2005
-# Nitrogen dioxide air pollution; 2006
-# Nitrogen dioxide air pollution; 2007
-# Nitrogen dioxide air pollution; 2010
-# Nitrogen oxides air pollution; 2010
-# Gas or solid-fuel cooking/heating | Instance 0
-
-##Generated
-#Lung Cancer (Y/N)
-#Time to Lung Cancer
-##########################################################################################################
-
 library("readr")
 library("dplyr")
 library("data.table")
