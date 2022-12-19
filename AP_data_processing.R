@@ -2,6 +2,9 @@ library("readr")
 library("dplyr")
 library("data.table")
 
+
+# Read in Files -----------------------------------------------------------
+
 file1 <- "C:/Users/Caitlyn/Box/Research/air_pollution/Datasets/ukbbPollutionLung_participant.tsv"
 file2 <- "C:/Users/Caitlyn/Box/Research/air_pollution/Datasets/solid_all_0912.csv"
 file3 <- "C:/Users/Caitlyn/Box/Research/air_pollution/Datasets/meta_data_forCaitlyn.txt"
@@ -12,19 +15,27 @@ cancerSolid <- read_csv(file2)
 demo <- read.delim(file3, header = TRUE, sep = "\t", dec = ".")
 cancerHeme <- read_csv(file4)
 
-#Combine all cancer records
+
+# Merge Cancer Data -------------------------------------------------------
+
+#Combine cancer records
 cancer <- rbind(cancerSolid, cancerHeme)
 rm(cancerSolid,cancerHeme)
 cancer$eid <- as.integer(cancer$eid)
 
+
+# Merge UKBB and Demographic Data -----------------------------------------
+
 #Add column labels to UK Biobank data
-names(ukbb) <- c('eid', 'townsend', 'bmi', 'householdIncomeCat', 'dateAssesment', 'pm10_2007', 'pm10_2010',
-               'pm25Absorb_2010', 'pm25_2010', 'pmcourse_2010', 'no2_2005', 'no2_2006', 'no2_2007',
-               'no2_2010', 'no1_2010', 'fuel', 'education', 'exposeSmokeHomeRaw', 'timeCurrentAddress')
+names(ukbb) <- c('eid', 'townsend', 'bmi', 'householdIncomeCat', 'dateAssesment',
+                 'pm10_2007', 'pm10_2010', 'pm25Absorb_2010', 'pm25_2010',
+                 'pmcourse_2010', 'no2_2005', 'no2_2006', 'no2_2007',
+                 'no2_2010', 'no1_2010', 'fuel', 'education',
+                 'exposeSmokeHomeRaw', 'timeCurrentAddress')
 ukbb$eid <- as.integer(ukbb$eid)
 
 
-#Merge UKBB data sets
+#Merge UKBB and demographic data sets
 excludeVars <- names(demo) %in% c("raceRaw",
                                   "dob",
                                   "baselineDate",
@@ -44,7 +55,9 @@ df <-  merge(ukbb, demo, by="eid")
 rm(ukbb, demo)
 
 
-#Define pollution increase per micro-gram/m^3 increase
+# Generate New Variables -------------------------------------------------
+
+#Define pollution increase per micro-gram/m^3 increment
 attach(df)
 df$pm10_2007per10 <- pm10_2007 / 10
 df$pm10_2010per10 <- pm10_2010 / 10
@@ -57,6 +70,8 @@ df$no2_2010per10 <- no2_2010 / 10
 df$no1_2010per20 <- no1_2010 /20
 detach(df)
 
+#Create censor date variable, dateCensor has unexpected values
+
 #Define bmi category (Normal , Underweight, Overweight, Obese, NA) 
 # df$bmiCat <- df$bmi
 # <18.5
@@ -67,33 +82,33 @@ detach(df)
 #Define income category (Less than 31000, Greater than 31000, NA)
 # df$incomeCat <- df$householdIncomeCat
 
-# #Age Category (Under 60, 60 or Over)
-# ageCat
+#Age Category (Under 60, 60 or Over)
+# df$ageCat
 
 #Define education level category(Degree or professional education, Other levels, NA)
-#educationCat
+# df$educationCat
 
+
+# Merge Cancer, UKBB Data -------------------------------------------------
 
 #Combine with cancer data
-# merged <- data.table(df, key="eid")[data.table(cancer, key="eid"), allow.cartesian=TRUE]
 merged <- merge(df, cancer, all=TRUE)
-merged$prior_cancer[is.na(merged$prior_cancer)] <- 0
-merged$lung_cancer[is.na(merged$lung_cancer)] <- 0
+merged$prior_cancer[is.na(merged$prior_cancer)] <- 0 #Coding NA as 0
+merged$lung_cancer[is.na(merged$lung_cancer)] <- 0   #Coding NA as 0
 rm(df, cancer)
 gc()
 
 
-#Filter out records with prior cancers
-merged <- subset(merged, subset=merged$prior_cancer==0,
-                         select=eid:t_lungCancer)
+# Filtering Out Prior Cancers, Duplicate Rows -----------------------------
 
-#Sort by cancer date, then eid
+#Filter out records with prior cancers
+merged <- subset(merged, 
+                 subset=merged$prior_cancer==0,
+                 select=eid:t_lungCancer)
 
 #If has lung cancer = cancer date, else NA 
 merged$cancerDate_Lung[merged$lung_cancer==1] <- merged$cancerDate
 merged$cancerDate_Lung[merged$lung_cancer==0] <- NA
-
-#Create sensor date variable
 
 
 #Sort by lung cancer date, eid
@@ -115,8 +130,10 @@ gc()
 #Subset PM data set
 
 
-#Export to RDS file
-write.csv(df2, file =  "C:/Users/Caitlyn/Box/Research/air_pollution/Datasets/pollution.csv", row.names = FALSE)
-saveRDS(df2, file = "C:/Users/Caitlyn/Box/Research/air_pollution/Datasets/pollution.rds")
-# saveRDS(df_nox, file = "C:/Users/Caitlyn/Box/Research/air_pollution/Datasets/NOx.rds")
-# saveRDS(df_pm, file = "C:/Users/Caitlyn/Box/Research/air_pollution/Datasets/PM.rds")
+# Export RDS File ---------------------------------------------------------
+#Currently one large data frame, though paper breaks out PM / NOx
+write.csv(df2,
+          file =  "C:/Users/Caitlyn/Box/Research/air_pollution/Datasets/pollution.csv",
+          row.names = FALSE)
+saveRDS(df2,
+        file = "C:/Users/Caitlyn/Box/Research/air_pollution/Datasets/pollution.rds")
