@@ -3,12 +3,12 @@ library("dplyr")
 library("data.table")
 
 
-# Read in Files -----------------------------------------------------------
-
-file1 <- "C:/Users/Caitlyn/Box/Research/air_pollution/Datasets/ukbbPollutionLung_participant.tsv"
-file2 <- "C:/Users/Caitlyn/Box/Research/air_pollution/Datasets/solid_all_0912.csv"
-file3 <- "C:/Users/Caitlyn/Box/Research/air_pollution/Datasets/meta_data_forCaitlyn.txt"
-file4 <- "C:/Users/Caitlyn/Box/Research/air_pollution/Datasets/heme.csv"
+# Read in Files (EDIT PREFIX)---------------------------------------------
+prefix <- "C:/Users/Caitlyn/Box/Research/air_pollution/Datasets/"
+file1 <- paste0(prefix,"ukbbPollutionLung_participant.tsv")
+file2 <- paste0(prefix,"solid_all_0912.csv")
+file3 <- paste0(prefix,"meta_data_forCaitlyn.txt")
+file4 <- paste0(prefix,"heme.csv")
 
 ukbb <- read_tsv(file1)
 cancerSolid <- read_csv(file2)
@@ -78,11 +78,14 @@ detach(df)
 
 # Merge Cancer, UKBB Data -------------------------------------------------
 
+#Exclude variables from merge
+cancer_2 <- cancer %>% select(-baselineDate)
+
 #Combine with cancer data
 merged <- merge(df, cancer, all=TRUE)
 merged$prior_cancer[is.na(merged$prior_cancer)] <- 0 #Coding NA as 0
 merged$lung_cancer[is.na(merged$lung_cancer)] <- 0   #Coding NA as 0
-rm(df, cancer)
+rm(df, cancer, cancer_2)
 gc()
 
 
@@ -113,4 +116,4 @@ rm(merged,sorted1,sorted2)
 gc()
 
 # Export RDS File ---------------------------------------------------------
-saveRDS(df2, file = "C:/Users/Caitlyn/Box/Research/air_pollution/Datasets/pollution.rds")
+saveRDS(df2, file = paste0(prefix,"pollution.rds"))
