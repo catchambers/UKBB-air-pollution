@@ -26,7 +26,7 @@ cancer$eid <- as.integer(cancer$eid)
 
 # Merge UKBB and Demographic Data -----------------------------------------
 
-#Add column labels to UK Biobank data
+#Add column labels to UKBB data
 names(ukbb) <- c('eid', 'townsend', 'bmi', 'householdIncomeCat', 'dateAssesment',
                  'pm10_2007', 'pm10_2010', 'pm25Absorb_2010', 'pm25_2010',
                  'pmcourse_2010', 'no2_2005', 'no2_2006', 'no2_2007',
@@ -34,25 +34,12 @@ names(ukbb) <- c('eid', 'townsend', 'bmi', 'householdIncomeCat', 'dateAssesment'
                  'exposeSmokeHomeRaw', 'timeCurrentAddress')
 ukbb$eid <- as.integer(ukbb$eid)
 
+#Exclude variables from merge
+genetic_princ_col <- grep("genetic_principal*", colnames(demo))
+demo_2 <- demo %>% select(-c(raceRaw, dob, baselineDate, all_of(genetic_princ_col), batch))
 
-#Merge UKBB and demographic data sets
-excludeVars <- names(demo) %in% c("raceRaw",
-                                  "dob",
-                                  "baselineDate",
-                                  "genetic_principal_components_f22009_0_1",
-                                  "genetic_principal_components_f22009_0_2",
-                                  "genetic_principal_components_f22009_0_3",
-                                  "genetic_principal_components_f22009_0_4",
-                                  "genetic_principal_components_f22009_0_5",
-                                  "genetic_principal_components_f22009_0_6",
-                                  "genetic_principal_components_f22009_0_7",
-                                  "genetic_principal_components_f22009_0_8",
-                                  "genetic_principal_components_f22009_0_9",
-                                  "genetic_principal_components_f22009_0_10",
-                                  "batch")
-demo <- demo[!excludeVars]
-df <-  merge(ukbb, demo, by="eid")
-rm(ukbb, demo)
+df <-  merge(ukbb, demo_2, by="eid")
+rm(ukbb, demo, demo_2)
 
 
 # Generate New Variables -------------------------------------------------
@@ -125,15 +112,5 @@ df2 <- sorted2[!duplicated(sorted2$eid), ]
 rm(merged,sorted1,sorted2)
 gc()
 
-#Subset NOx data set
-
-#Subset PM data set
-
-
 # Export RDS File ---------------------------------------------------------
-#Currently one large data frame, though paper breaks out PM / NOx
-write.csv(df2,
-          file =  "C:/Users/Caitlyn/Box/Research/air_pollution/Datasets/pollution.csv",
-          row.names = FALSE)
-saveRDS(df2,
-        file = "C:/Users/Caitlyn/Box/Research/air_pollution/Datasets/pollution.rds")
+saveRDS(df2, file = "C:/Users/Caitlyn/Box/Research/air_pollution/Datasets/pollution.rds")
