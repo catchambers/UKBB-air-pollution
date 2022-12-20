@@ -1,5 +1,5 @@
 ---
-title: "Air Pollution and Lung Cancer - Plots"
+title: "Air Pollution and Lung Cancer - Analysis"
 author: "Caitlyn Chitwood"
 output: html_document
 ---
@@ -255,4 +255,28 @@ cor(pm25_2010, exposeSmokeHome)
 cor(pm25_2010, bmi, use="complete.obs")
 cor(pm25_2010, packYear, use="complete.obs")
 detach(mildPM25)
+```
+
+
+
+```{r model 1}
+##Cox Regression Model 1 - Age and Sex covariates only
+res.model1 <- coxph(
+  Surv(t_lungCancer, lung_cancer) ~  pm25_2010per5 + ageBaseline + sex,
+  data = df,
+  ties = "efron"
+)
+```
+
+
+##Paper uses exposeSmokeHomeImputed, bmiCat, and lungFamilyHistory.
+##I haven't generated these variables.
+```{r model 2}
+##Model 2 - Multiple covariates
+res.model2 <- coxph(
+  Surv(t_lungCancer, lung_cancer) ~ pm25_2010per5 + ageBaseline + sex + householdIncomeCat 
+                                + education + bmi + smokingCat +  exposeSmokeHomeRaw,
+  data = df,
+  ties = "efron"
+)
 ```
