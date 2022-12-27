@@ -1,0 +1,20 @@
+---
+title: "Air Pollution Analysis"
+author: "Caitlyn Chitwood"
+date: "2022-12-27"
+output: html_document
+---
+
+###############################################################################
+#                             MASTER SCRIPT
+# Run analysis from this file. This file also serves as documentation for how 
+# the R Markdown file was produced.
+#
+# "1": Run lung cancer analysis
+# "2": Run CHIP analysis
+###############################################################################
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
