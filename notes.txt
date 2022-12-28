@@ -1,21 +1,11 @@
-##Data downloaded from UKBB:
-# Participant ID
-# Townsend deprivation index at recruitment
-# Body mass index (BMI) | Instance 0
-# Average total household income before tax | Instance 0
-# Date of attending assessment centre | Instance 0
-# Particulate matter air pollution (pm10); 2007
-# Particulate matter air pollution (pm10); 2010
-# Particulate matter air pollution (pm2.5) absorbance; 2010
-# Particulate matter air pollution (pm2.5); 2010
-# Particulate matter air pollution 2.5-10um; 2010
-# Nitrogen dioxide air pollution; 2005
-# Nitrogen dioxide air pollution; 2006
-# Nitrogen dioxide air pollution; 2007
-# Nitrogen dioxide air pollution; 2010
-# Nitrogen oxides air pollution; 2010
-# Gas or solid-fuel cooking/heating | Instance 0
+Citations ----------------------------------------------------------------
+Huang et al., “Air Pollution, Genetic Factors, and the Risk of Lung Cancer.”
+Tian et al., “Clonal Hematopoiesis and Risk of Incident Lung Cancer.”
 
-##Generated
-#Lung Cancer (Y/N)
-#Time to Lung Cancer
+Other Reading ------------------------------------------------------------
+The project on air pollution and CHIP is in collaboration with Charlie Swanton at UCL.
+Here is a bit of background on the idea linking air pollution to cancer:
+https://pubmed.ncbi.nlm.nih.gov/26598543/
+
+Here is a general review on CHIP and its clinical relevance that might be good background:
+https://pubmed.ncbi.nlm.nih.gov/32736381/
