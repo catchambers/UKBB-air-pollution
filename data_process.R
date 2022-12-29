@@ -16,6 +16,7 @@ cancerSolid <- read_csv(file2)
 demo <- read.delim(file3, header = TRUE, sep = "\t", dec = ".")
 cancerHeme <- read_csv(file4)
 
+rm(file1, file2, file3, file4, file5)
 
 # Merge Cancer Data -------------------------------------------------------
 
@@ -40,7 +41,7 @@ genetic_princ_col <- grep("genetic_principal*", colnames(demo))
 demo_2 <- demo %>% select(-c(raceRaw, dob, baselineDate, all_of(genetic_princ_col), batch))
 
 df <-  merge(ukbb, demo_2, by="eid")
-rm(ukbb, demo, demo_2)
+rm(ukbb, demo, demo_2, genetic_princ_col)
 
 
 # Generate New Variables -------------------------------------------------
@@ -111,7 +112,7 @@ sorted2 <- sorted1[
 ]
 
 #Remove duplicate eid
-df2 <- sorted2[!duplicated(sorted2$eid), ]
+df_lung <- sorted2[!duplicated(sorted2$eid), ]
 
 rm(merged,sorted1,sorted2)
 gc()
