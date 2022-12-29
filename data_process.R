@@ -119,5 +119,3 @@ df2 <- sorted2[!duplicated(sorted2$eid), ]
 rm(merged,sorted1,sorted2)
 gc()
 
-# Export RDS File ---------------------------------------------------------
-saveRDS(df2, file = paste0(prefix,"lung.rds"))
