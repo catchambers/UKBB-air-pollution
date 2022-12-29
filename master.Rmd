@@ -23,27 +23,19 @@ setwd(dirname(getActiveDocumentContext()$path))   #set cwd to master file locati
 
 source("utils.R")  #load functions
 source("plots.R")  #load functions
+source("data_process.R")  #load functions
 
 ```
 
 ##chip option not functional currently
 ```{r data processing, include=FALSE}
 
-source("data_process.R") #runs script
-
-```
-
-```{r analysis selection, include=FALSE}
-
 selection <- get_input()  #1 lung, 2 ch
 
-if(selection == 1){
-  attach(df_lung)
-} else if (selection == 2){
-  attach(df_ch)
-}
+df <- get_data(selection) #generate data frame for selected data
 
 ```
+
 ##Output showing which selection chosen in document
 
 
@@ -268,7 +260,6 @@ detach(mildPM25)
 ```
 
 
-
 ```{r model 1}
 ##Cox Regression Model 1 - Age and Sex covariates only
 res.model1 <- coxph(
@@ -277,7 +268,6 @@ res.model1 <- coxph(
   ties = "efron"
 )
 ```
-
 
 ##Paper uses exposeSmokeHomeImputed, bmiCat, and lungFamilyHistory.
 ##I haven't generated these variables.
