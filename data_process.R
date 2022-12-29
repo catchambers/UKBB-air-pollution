@@ -3,10 +3,6 @@
 # This script contains functions used for manipulating and combining data sets.
 ###############################################################################
 
-library("readr")
-library("dplyr")
-library("data.table")
-
 # Read in Files (EDIT PREFIX)---------------------------------------------
 prefix <- "C:/Users/Caitlyn/Box/Research/air_pollution/Datasets/"
 file1 <- paste0(prefix,"ukbbPollutionLung_participant.tsv")

@@ -13,38 +13,39 @@ output: html_document
 # "2": Run CHIP analysis
 ###############################################################################
 
-```{r load libraries, include=FALSE}
+```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
 libraries <- c("survival", "ggplot2", "rstudioapi")
-lapply(libraries, require, character.only = TRUE)    # Load multiple packages
+lapply(libraries, require, character.only = TRUE) #load multiple packages
+
+setwd(dirname(getActiveDocumentContext()$path))   #set cwd to master file location
+
+source("utils.R")  #load functions
+source("plots.R")  #load functions
 
 ```
 
-```{r source files, include=FALSE}
-
-setwd(dirname(getActiveDocumentContext()$path)) #set cwd to master file location
-
-source("utils.R")
-source("data_process.R")
-source("plots.R")
-
-```
-
-##Could move code in data_process to this section
-##chip option not functional currently
-
-```{r infile, include=FALSE}
+```{r analysis selection, include=FALSE}
 selection <- get_input()
 if(selection == 1){
-  df <- readRDS("C:/Users/Caitlyn/Box/Research/air_pollution/Datasets/lung.rds")
+  
 } else if (selection == 2){
-  df <- readRDS("C:/Users/Caitlyn/Box/Research/air_pollution/Datasets/chip.rds")
+  
 }
+```
+##Output showing which selection chosen in document
+
+##chip option not functional currently
+```{r data processing, include=FALSE}
+
+source("data_process.R") #runs script
 
 attach(df)
 ```
-##Output showing which selection chosen in document
+
+
+
 
 
 ```{r density plot sex, echo=FALSE}
