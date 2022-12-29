@@ -1,7 +1,6 @@
 ###############################################################################
 #                         PLOTTING SCRIPT
 # This script contains functions used for visualization and analysis.
-# These functions are sourced by the master script.
 ###############################################################################
 
 

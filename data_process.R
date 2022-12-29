@@ -1,7 +1,6 @@
 ###############################################################################
 #                         DATA PROCESSING SCRIPT
 # This script contains functions used for manipulating and combining data sets.
-# These functions are sourced by the master script.
 ###############################################################################
 
 library("readr")
@@ -121,4 +120,4 @@ rm(merged,sorted1,sorted2)
 gc()
 
 # Export RDS File ---------------------------------------------------------
-saveRDS(df2, file = paste0(prefix,"pollution.rds"))
+saveRDS(df2, file = paste0(prefix,"lung.rds"))
