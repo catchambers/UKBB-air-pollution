@@ -5,10 +5,11 @@
 
 # Read in Files (EDIT PREFIX)---------------------------------------------
 prefix <- "C:/Users/Caitlyn/Box/Research/air_pollution/Datasets/"
-file1 <- paste0(prefix,"ukbbPollutionLung_participant.tsv")
-file2 <- paste0(prefix,"solid_all_0912.csv")
-file3 <- paste0(prefix,"meta_data_forCaitlyn.txt")
-file4 <- paste0(prefix,"heme.csv")
+file1 <- paste0(prefix,"ukbbPollutionLung_participant.tsv") #biobank export
+file2 <- paste0(prefix,"solid_all_0912.csv")        #solid tumors
+file3 <- paste0(prefix,"meta_data_forCaitlyn.txt")  
+file4 <- paste0(prefix,"heme.csv")                  #hematologic cancers
+file5 <- paste0(prefix,"CH450K_1111.txt")           #CH for 250k, update pending
 
 ukbb <- read_tsv(file1)
 cancerSolid <- read_csv(file2)
