@@ -4,8 +4,7 @@ This project aims to recreate the following analysis associating long-term air p
 
 These methods will be extended to review the association between air pollution exposure and the risk of developing clonal hematopoesis.
 
-## Getting Started
-### View Latest Report
+## View Latest Report
 To view the latest stable report, click master.md above.
 
 ## Workflow
