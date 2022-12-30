@@ -99,7 +99,7 @@ get_data <- function(selection) {
                      subset=merged$prior_cancer==0,
                      select=eid:t_lungCancer)
     
-    if(selection == 1) {
+    if(selection == "LC") {
         #If has lung cancer = cancer date, else NA 
         merged$cancerDate_Lung[merged$lung_cancer==1] <- merged$cancerDate
         merged$cancerDate_Lung[merged$lung_cancer==0] <- NA
@@ -116,7 +116,7 @@ get_data <- function(selection) {
         #Remove duplicate eid and return lung cancer data
         return(sorted2[!duplicated(sorted2$eid), ])
         
-    } else if(selection == 2) {
+    } else if(selection == "CH") {
         ##add ch data processing
     }
     

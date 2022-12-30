@@ -1,25 +1,31 @@
 ---
 title: "Air Pollution Analysis"
-author: "Caitlyn Chitwood"
-date: "2022-12-27"
 output: html_document
+params:
+  condition:
+    label: Select Condition (LC = Lung Cancer, CH = Clonal Hematopoiesis)
+    value: LC
+    input: select
+    choices: [LC, CH]
+  printcode:
+    label: "Display Code:"
+    value: TRUE
+  date: !r Sys.Date()
+  author: "Caitlyn Chitwood"
 ---
-###############################################################################
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = params$printcode)
+
 #                             MASTER SCRIPT
 # Run analysis from this file. This file also serves as documentation for how 
 # the R Markdown output file was produced.
-#
-# "1": Run lung cancer analysis
-# "2": Run CHIP analysis
-###############################################################################
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-
-libraries <- c("survival", "ggplot2", "rstudioapi", "readr", "dplyr", "data.table")
+libraries <- c("survival", "ggplot2", "rstudioapi", "readr", "dplyr", "data.table",
+               "shiny")
 lapply(libraries, require, character.only = TRUE) #load multiple packages
 
-setwd(dirname(getActiveDocumentContext()$path))   #set cwd to master file location
+#setwd(dirname(getActiveDocumentContext()$path))   #set cwd to master file location
 
 source("utils.R")  #load functions
 source("plots.R")  #load functions
@@ -27,17 +33,14 @@ source("data_process.R")  #load functions
 
 ```
 
-##chip option not functional currently
+## CH option not functional currently
 ```{r data processing, include=FALSE}
 
-selection <- get_input()  #1 lung, 2 ch
-
-df <- get_data(selection) #generate data frame for selected data
-
+df <- get_data(params$condition) #generate data frame for selected data
+attach(df)
 ```
 
-##Output showing which selection chosen in document
-
+`r if(params$condition=="LC"){"Lung cancer"} else if(params$condition=="CH"){"Clonal hematopoiesis"}` data was used for the following analysis.
 
 ```{r density plot sex, echo=FALSE}
 kd_male <- density(na.omit(pm10_2007[df$sex=="Male"])) #define kernel density
@@ -129,7 +132,7 @@ hist(pm25_2010,
      ylim=c(0,0.7))
 
 #Plot lognormal distribution
-xfit <- seq(min(pm25_2010), max(pm25_2010), length=40)
+xfit <- seq(min(pm25_2010, na.rm=TRUE), max(pm25_2010, na.rm=TRUE), length=40)
 yfit <- dlnorm(xfit,meanlog=log(mean(pm25_2010)), sdlog=log(sd(pm25_2010)))
 lines(xfit, yfit, col="black", lwd=2)
 
@@ -205,12 +208,12 @@ plot(no1_2010,
      no2_2010, 
      )
 cor(no1_2010, no2_2010, method="pearson", use="complete.obs")
-cor(no1_2010, no2_2010, m=ethod="spearman", use="complete.obs")
+cor(no1_2010, no2_2010, method="spearman", use="complete.obs")
 ```
 
 ```{r boxplot, echo=FALSE}
-quantile(pm25_2010)
-iqr <- IQR(pm25_2010)
+quantile(pm25_2010, na.rm=TRUE)
+iqr <- IQR(pm25_2010, na.rm=TRUE)
 
 boxplot(pm25_2010, 
         horizontal=TRUE,
@@ -223,10 +226,9 @@ qqline(pm25_2010)
 ```
 
 ```{r correlation}
-cor(pm25_2010, ageBaseline)
-cor(pm25_2010, exposeSmokeHome)
-cor(pm25_2010, bmi, use="complete.obs")
-cor(pm25_2010, packYear, use="complete.obs")
+cor(pm25_2010, ageBaseline, use="pairwise.complete.obs")
+cor(pm25_2010, bmi, use="pairwise.complete.obs")
+cor(pm25_2010, packYear, use="pairwise.complete.obs")
 ```
 
 
@@ -234,29 +236,28 @@ cor(pm25_2010, packYear, use="complete.obs")
 extremeOut <- 3*iqr
 mildOut <- 1.5*iqr
 
-extremePM25 <- subset(df, pm25_2010 > (mean(pm25_2010)+ extremeOut))
-mildPM25 <- subset(df, pm25_2010 > (mean(pm25_2010)+ mildOut))
+extremePM25 <- subset(df, pm25_2010 > (mean(pm25_2010, na.rm=TRUE)+ extremeOut))
+mildPM25 <- subset(df, pm25_2010 > (mean(pm25_2010, na.rm=TRUE)+ mildOut))
 ```
 
-There are `r length(extremePM25)` extreme outliers and `r length(mildPM25)` mild outliers for PM2.5 2010.
+There are `r nrow(extremePM25)` extreme outliers and `r nrow(mildPM25)` mild outliers for PM2.5 data from 2010.
 
 ```{r correlation mild}
 attach(extremePM25)
 cor(pm25_2010, ageBaseline)
-cor(pm25_2010, exposeSmokeHome)
-cor(pm25_2010, bmi, use="complete.obs")
-cor(pm25_2010, packYear, use="complete.obs")
+cor(pm25_2010, bmi, use="pairwise.complete.obs")
+cor(pm25_2010, packYear, use="pairwise.complete.obs")
 detach(extremePM25)
 ```
 
 ```{r correlation extreme}
 attach(mildPM25)
-cor(pm25_2010, dt_Lung)
-cor(pm25_2010, ageBaseline)
-cor(pm25_2010, exposeSmokeHome)
-cor(pm25_2010, bmi, use="complete.obs")
-cor(pm25_2010, packYear, use="complete.obs")
+cor(pm25_2010, ageBaseline, use="pairwise.complete.obs")
+cor(pm25_2010, bmi, use="pairwise.complete.obs")
+cor(pm25_2010, packYear, use="pairwise.complete.obs")
 detach(mildPM25)
+
+rm(mildPM25, extremePM25)
 ```
 
 
@@ -269,8 +270,7 @@ res.model1 <- coxph(
 )
 ```
 
-##Paper uses exposeSmokeHomeImputed, bmiCat, and lungFamilyHistory.
-##I haven't generated these variables.
+##Paper uses exposeSmokeHomeImputed, bmiCat, and lungFamilyHistory. These variables haven't been generated
 ```{r model 2}
 ##Model 2 - Multiple covariates
 res.model2 <- coxph(

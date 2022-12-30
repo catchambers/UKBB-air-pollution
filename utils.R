@@ -7,10 +7,19 @@ do_setup <- function(){
   
 }
 
-# User Input --------------------------------------------------------------
 
-get_input <- function(){
-  input <-  readline(prompt = "Enter 1 for lung cancer, 2 for CHIP : ")
-  input <- as.integer(input)
-  return(input)
+# get_input <- function(){
+#   input <-  readline(prompt = "Enter 1 for lung cancer, 2 for CHIP : ")
+#   input <- as.integer(input)
+#   if(input==1){
+#     return("lung")
+#   } else if(input==2){
+#     return("ch")
+#   }
+# 
+# }
+
+
+render_report = function(input) {
+  rmarkdown::render("MyDocument.Rmd", params = "ask")
 }
