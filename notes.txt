@@ -1,11 +1,28 @@
-Citations ----------------------------------------------------------------
-Huang et al., “Air Pollution, Genetic Factors, and the Risk of Lung Cancer.”
-Tian et al., “Clonal Hematopoiesis and Risk of Incident Lung Cancer.”
-
 Other Reading ------------------------------------------------------------
-The project on air pollution and CHIP is in collaboration with Charlie Swanton at UCL.
-Here is a bit of background on the idea linking air pollution to cancer:
+The project on air pollution and CHIP is in collaboration with Charlie Swanton at UCL. Background on the idea linking air pollution to cancer:
 https://pubmed.ncbi.nlm.nih.gov/26598543/
 
-Here is a general review on CHIP and its clinical relevance that might be good background:
+General review on CHIP and its clinical relevance:
 https://pubmed.ncbi.nlm.nih.gov/32736381/
+
+Definitions --------------------------------------------------------------
+Prevalent cancers were those diagnosed prior to recruitment to the Biobank study.
+
+Clonal Hematopoiesis
+Expansion of blood cells arising from mutant HEMATOPOIETIC STEM CELLS often related to aging. Mutations on epigenetic regulator genes are common in clonal hematopoiesis and may be a risk factor for HEMATOLOGIC NEOPLASMS and other cardiovascular diseases. When variant allele fraction is at least 2% and is present in the absence of severe cytopenias it is referred to as clonal hematopoiesis of indeterminate potential (CHIP).
+
+Methods ------------------------------------------------------------------
+Study Design - Retrospective Case-Control
+
+Study Population - UK Biobank Participants
+  -500,000 participants aged 40–69 years recruited between 2006 and 2010
+  
+Outcomes
+  -Incident lung cancer (replicating results)
+  -Incident clonal hematopoesis
+  
+Statistical Analyses
+  -Cox proportional hazard
+  
+Data Filtering -----------------------------------------------------------
+Excluded individuals with prevalent cancer (either solid tumor or hematologic).
