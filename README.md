@@ -20,7 +20,7 @@ To view the latest stable report, click master.md above.
 - Make and accept a pull request to incorporate changes into lab repository
 
 ### Generate a New Report
-- Open master.Rmd
+- Open master.Rmd in RStudio
 - Click dropdown on Knit, select "Knit with Parameters"
 - Enter name and date. Select data to use and whether to include code in output
 - Once report has been generated, review the temporary HTML
