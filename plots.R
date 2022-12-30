@@ -24,5 +24,41 @@ plot_mult_density <- function(variable, data1, data2, data3=NULL){
   }
 }
 
+# x1 = na.omit(pm10_2007[df$lung_cancer==1])
+# x2 = na.omit(pm10_2007[df$lung_cancer==0])
+# plot_mult_density("pm10_2007 (blue=Lung Cancer, red=No Lung Cancer)", x1,x2)
+# 
+# x1 = na.omit(pm10_2010[df$lung_cancer==1])
+# x2 = na.omit(pm10_2010[df$lung_cancer==0])
+# plot_mult_density("pm10_2010 (blue=Lung Cancer, red=No Lung Cancer)", x1,x2)
+# 
+# x1 = na.omit(pm25_2010[df$lung_cancer==1])
+# x2 = na.omit(pm25_2010[df$lung_cancer==0])
+# plot_mult_density("pm25_2010 (blue=Lung Cancer, red=No Lung Cancer)", x1,x2)
+# 
+# x1 = na.omit(pmcourse_2010[df$lung_cancer==1])
+# x2 = na.omit(pmcourse_2010[df$lung_cancer==0])
+# plot_mult_density("pmcourse_2010 (blue=Lung Cancer, red=No Lung Cancer)", x1,x2)
+# 
+# x1 = na.omit(no2_2005[df$lung_cancer==1])
+# x2 = na.omit(no2_2005[df$lung_cancer==0])
+# plot_mult_density("no2_2005 (blue=Lung Cancer, red=No Lung Cancer)", x1,x2)
+# 
+# x1 = na.omit(no2_2006[df$lung_cancer==1])
+# x2 = na.omit(no2_2006[df$lung_cancer==0])
+# plot_mult_density("no2_2006 (blue=Lung Cancer, red=No Lung Cancer)", x1,x2)
+# 
+# x1 = na.omit(no2_2007[df$lung_cancer==1])
+# x2 = na.omit(no2_2007[df$lung_cancer==0])
+# plot_mult_density("no2_2007 (blue=Lung Cancer, red=No Lung Cancer)", x1,x2)
+# 
+# x1 = na.omit(no2_2010[df$lung_cancer==1])
+# x2 = na.omit(no2_2010[df$lung_cancer==0])
+# plot_mult_density("no2_2010 (blue=Lung Cancer, red=No Lung Cancer)", x1,x2)
+# 
+# x1 = na.omit(no1_2010[df$lung_cancer==1])
+# x2 = na.omit(no1_2010[df$lung_cancer==0])
+# plot_mult_density("no1_2010 (blue=Lung Cancer, red=No Lung Cancer)", x1,x2)
+
 # Histograms --------------------------------------------------------------
 
