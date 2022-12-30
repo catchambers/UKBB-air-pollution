@@ -14,28 +14,21 @@ params:
     value: true
   date: !r Sys.Date()
   author: "Caitlyn Chitwood"
+bibliography: references.bib
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = params$printcode, fig.width = 4, fig.height = 4)
 
-#                             MASTER SCRIPT
-# Run analysis from this file. This file also serves as documentation for how 
-# the R Markdown output file was produced.
-
 libraries <- c("survival", "ggplot2", "rstudioapi", "readr", "dplyr", "data.table",
                "shiny")
 lapply(libraries, require, character.only = TRUE) #load multiple packages
-
-#setwd(dirname(getActiveDocumentContext()$path))   #set cwd to master file location
 
 source("utils.R")  #load functions
 source("plots.R")  #load functions
 source("data_process.R")  #load functions
 
 ```
-
-CH option not functional currently
 
 ```{r data-processing, include=FALSE}
 
@@ -191,25 +184,19 @@ hist(pm25_2010,
 ```
 
 ```{r scatterplot-PM10-NO2,}
-plot(pm10_2010, 
-     no2_2010, 
-     )
+plot(pm10_2010, no2_2010)
 cor(pm10_2010, no2_2010, method="pearson", use="complete.obs")
 cor(pm10_2010, no2_2010, method="spearman", use="complete.obs")
 ```
 
 ```{r scatterplot-PM10-PM2.5}
-plot(pm10_2010, 
-     pm25_2010 
-     )
+plot(pm10_2010,pm25_2010)
 cor(pm10_2010, pm25_2010, method="pearson", use="complete.obs")
 cor(pm10_2010, pm25_2010, method="spearman", use="complete.obs")
 ```
 
 ```{r scatterplot-NO1-NO2}
-plot(no1_2010, 
-     no2_2010, 
-     )
+plot(no1_2010, no2_2010)
 cor(no1_2010, no2_2010, method="pearson", use="complete.obs")
 cor(no1_2010, no2_2010, method="spearman", use="complete.obs")
 ```
@@ -233,7 +220,6 @@ cor(pm25_2010, ageBaseline, use="pairwise.complete.obs")
 cor(pm25_2010, bmi, use="pairwise.complete.obs")
 cor(pm25_2010, packYear, use="pairwise.complete.obs")
 ```
-
 
 ```{r outliers}
 extremeOut <- 3*iqr
@@ -259,9 +245,8 @@ cor(pm25_2010, packYear, use="pairwise.complete.obs")
 rm(mildPM25, extremePM25)
 ```
 
-
 ```{r model-1}
-##Cox Regression Model 1 - Age and Sex covariates only
+##Age and Sex covariates only
 res.model1 <- coxph(
   Surv(t_lungCancer, lung_cancer) ~  pm25_2010per5 + ageBaseline + sex,
   data = df,
@@ -269,13 +254,15 @@ res.model1 <- coxph(
 )
 ```
 
-Paper uses exposeSmokeHomeImputed, bmiCat, and lungFamilyHistory. These variables haven't been generated.
-
 ```{r model-2}
-##Model 2 - Multiple covariates
+##Multiple covariates
 res.model2 <- coxph(
   Surv(t_lungCancer, lung_cancer) ~ pm25_2010per5 + ageBaseline + sex + householdIncomeCat + education + bmi + smokingCat +  exposeSmokeHomeRaw,
   data = df,
   ties = "efron"
 )
 ```
+
+## Citations
+
+[@tian2022; @huang2021]
