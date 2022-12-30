@@ -29,5 +29,7 @@ To view the latest stable report, click master.md above.
 - [ ] Data processing for CH
 - [ ] Update CH file when latest results become available (200k participants currently)
 - [ ] Test running on cluster. Update filepaths as needed
+- [ ] Paper uses exposeSmokeHomeImputed, bmiCat, and lungFamilyHistory. These variables haven't been generated
+- [ ] Lung PRS
 
 ## Future Ideas
