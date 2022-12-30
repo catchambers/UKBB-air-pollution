@@ -1,5 +1,5 @@
 ---
-title: "Air Pollution"
+title: "Air Pollution and Health Outcomes in the UK Biobank"
 output:
   github_document:
     toc: true
@@ -17,11 +17,13 @@ params:
 bibliography: references.bib
 ---
 
+##### `r params$author` \| `r params$date`
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = params$printcode, fig.width = 4, fig.height = 4)
 
 libraries <- c("survival", "ggplot2", "rstudioapi", "readr", "dplyr", "data.table",
-               "shiny")
+               "shiny", "knitr")
 lapply(libraries, require, character.only = TRUE) #load multiple packages
 
 source("utils.R")  #load functions
@@ -36,7 +38,21 @@ df <- get_data(params$condition) #generate data frame for selected data
 attach(df)
 ```
 
-`r if(params$condition=="LC"){"Lung cancer"} else if(params$condition=="CH"){"Clonal hematopoiesis"}` data was used for the following analysis.
+`r if(params$condition=="LC"){"Lung cancer"} else if(params$condition=="CH"){"Clonal hematopoiesis"}` data was used for the following analyses.
+
+## Descriptive Statistics
+
+### Summary Statistics
+
+```{r summary}
+lungcancer <- table(lung_cancer)
+
+kable(head(df))
+```
+
+There are `r lungcancer[2]` cases of lung cancer in the data set.
+
+### Density Plots
 
 ```{r density-plot-sex}
 kd_male <- density(na.omit(pm10_2007[df$sex=="Male"])) #define kernel density
@@ -58,46 +74,9 @@ lines(kd_female,
 x1 = na.omit(pm10_2007[df$ageBaseline>=60])
 x2 = na.omit(pm10_2007[df$ageBaseline<60])
 plot_mult_density("pm10_2007 (blue=60 or over, red=under 60)", x1,x2)
-
 ```
 
-```{r lung-cancer}
-x1 = na.omit(pm10_2007[df$lung_cancer==1])
-x2 = na.omit(pm10_2007[df$lung_cancer==0])
-plot_mult_density("pm10_2007 (blue=Lung Cancer, red=No Lung Cancer)", x1,x2)
-
-x1 = na.omit(pm10_2010[df$lung_cancer==1])
-x2 = na.omit(pm10_2010[df$lung_cancer==0])
-plot_mult_density("pm10_2010 (blue=Lung Cancer, red=No Lung Cancer)", x1,x2)
-
-x1 = na.omit(pm25_2010[df$lung_cancer==1])
-x2 = na.omit(pm25_2010[df$lung_cancer==0])
-plot_mult_density("pm25_2010 (blue=Lung Cancer, red=No Lung Cancer)", x1,x2)
-
-x1 = na.omit(pmcourse_2010[df$lung_cancer==1])
-x2 = na.omit(pmcourse_2010[df$lung_cancer==0])
-plot_mult_density("pmcourse_2010 (blue=Lung Cancer, red=No Lung Cancer)", x1,x2)
-
-x1 = na.omit(no2_2005[df$lung_cancer==1])
-x2 = na.omit(no2_2005[df$lung_cancer==0])
-plot_mult_density("no2_2005 (blue=Lung Cancer, red=No Lung Cancer)", x1,x2)
-
-x1 = na.omit(no2_2006[df$lung_cancer==1])
-x2 = na.omit(no2_2006[df$lung_cancer==0])
-plot_mult_density("no2_2006 (blue=Lung Cancer, red=No Lung Cancer)", x1,x2)
-
-x1 = na.omit(no2_2007[df$lung_cancer==1])
-x2 = na.omit(no2_2007[df$lung_cancer==0])
-plot_mult_density("no2_2007 (blue=Lung Cancer, red=No Lung Cancer)", x1,x2)
-
-x1 = na.omit(no2_2010[df$lung_cancer==1])
-x2 = na.omit(no2_2010[df$lung_cancer==0])
-plot_mult_density("no2_2010 (blue=Lung Cancer, red=No Lung Cancer)", x1,x2)
-
-x1 = na.omit(no1_2010[df$lung_cancer==1])
-x2 = na.omit(no1_2010[df$lung_cancer==0])
-plot_mult_density("no1_2010 (blue=Lung Cancer, red=No Lung Cancer)", x1,x2)
-```
+### Histograms
 
 ```{r histogram-age}
 #define data
@@ -111,12 +90,6 @@ hist(x2, col='green', add=TRUE)
 #add legend
 legend('topright', c('60 or Over', 'Under 60'), fill=c('red', 'green'))
 ```
-
-```{r summary, include=FALSE}
-lungcancer <- table(lung_cancer)
-```
-
-There are `r lungcancer[2]` cases of lungcancer in the data set.
 
 ```{r histogram}
 hist(pm25_2010, 
@@ -135,7 +108,7 @@ lines(xfit, yfit, col="black", lwd=2)
 
 The distribution is right-skewed and appears to be a log normal distribution.
 
-```{r histogram2}
+```{r histogram2, fig.height=7, fig.width=7}
 par(mfrow=c(3,3))
 hist(pm10_2007, 
      xlab="pm10_2007 (μg/m3)",
@@ -183,6 +156,8 @@ hist(pm25_2010,
      freq=FALSE)
 ```
 
+### Scatter Plots and Correlation Coefficients: pollutants
+
 ```{r scatterplot-PM10-NO2,}
 plot(pm10_2010, no2_2010)
 cor(pm10_2010, no2_2010, method="pearson", use="complete.obs")
@@ -201,6 +176,18 @@ cor(no1_2010, no2_2010, method="pearson", use="complete.obs")
 cor(no1_2010, no2_2010, method="spearman", use="complete.obs")
 ```
 
+### Scatter Plots and Correlation Coefficients: pollutants and covariates
+
+```{r correlation}
+cor(pm25_2010, ageBaseline, use="pairwise.complete.obs")
+cor(pm25_2010, bmi, use="pairwise.complete.obs")
+cor(pm25_2010, packYear, use="pairwise.complete.obs")
+```
+
+### PM 2.5
+
+#### Box Plot
+
 ```{r boxplot}
 quantile(pm25_2010, na.rm=TRUE)
 iqr <- IQR(pm25_2010, na.rm=TRUE)
@@ -210,16 +197,14 @@ boxplot(pm25_2010,
         col="cadetblue")
 ```
 
+#### QQ Plot
+
 ```{r qqplot}
 qqnorm(pm25_2010)
 qqline(pm25_2010)
 ```
 
-```{r correlation}
-cor(pm25_2010, ageBaseline, use="pairwise.complete.obs")
-cor(pm25_2010, bmi, use="pairwise.complete.obs")
-cor(pm25_2010, packYear, use="pairwise.complete.obs")
-```
+#### Outliers
 
 ```{r outliers}
 extremeOut <- 3*iqr
@@ -231,38 +216,48 @@ mildPM25 <- subset(df, pm25_2010 > (mean(pm25_2010, na.rm=TRUE)+ mildOut))
 
 There are `r nrow(extremePM25)` extreme outliers and `r nrow(mildPM25)` mild outliers for PM2.5 data from 2010.
 
+#### Correlation Coeffiecients: pollutant extreme outliers and covariates
+
 ```{r correlation-extreme}
-cor(pm25_2010, extremePM25$ageBaseline)
-cor(pm25_2010, extremePM25$bmi, use="pairwise.complete.obs")
-cor(pm25_2010, extremePM25$packYear, use="pairwise.complete.obs")
+cor(extremePM25$pm25_2010, extremePM25$ageBaseline)
+cor(extremePM25$pm25_2010, extremePM25$bmi, use="pairwise.complete.obs")
+cor(extremePM25$pm25_2010, extremePM25$packYear, use="pairwise.complete.obs")
 ```
 
+#### Correlation Coeffiecients: pollutant mild outliers and covariates
+
 ```{r correlation-mild}
-cor(pm25_2010, ageBaseline, use="pairwise.complete.obs")
-cor(pm25_2010, bmi, use="pairwise.complete.obs")
-cor(pm25_2010, packYear, use="pairwise.complete.obs")
+cor(mildPM25$pm25_2010, mildPM25$ageBaseline, use="pairwise.complete.obs")
+cor(mildPM25$pm25_2010, mildPM25$bmi, use="pairwise.complete.obs")
+cor(mildPM25$pm25_2010, mildPM25$packYear, use="pairwise.complete.obs")
 
 rm(mildPM25, extremePM25)
 ```
 
+## Regression: Cox Proportional-Hazards Model
+
+### Model 1: age and sex covariates only
+
 ```{r model-1}
-##Age and Sex covariates only
 res.model1 <- coxph(
   Surv(t_lungCancer, lung_cancer) ~  pm25_2010per5 + ageBaseline + sex,
   data = df,
   ties = "efron"
 )
+res.model1
 ```
 
+### Model 2: multiple covariates
+
 ```{r model-2}
-##Multiple covariates
 res.model2 <- coxph(
   Surv(t_lungCancer, lung_cancer) ~ pm25_2010per5 + ageBaseline + sex + householdIncomeCat + education + bmi + smokingCat +  exposeSmokeHomeRaw,
   data = df,
   ties = "efron"
 )
+res.model2
 ```
 
 ## Citations
 
-[@tian2022; @huang2021]
+[@huang2021a; @tian2022a; @swanton2016]
