@@ -8,17 +8,23 @@ These methods will be extended to review the association between air pollution e
 ### View Latest Report
 To view the latest stable report, click master.md above.
 
-### Generate a New Report
-- Fork this repository to your personal github account
+## Workflow
+### Do this once
+- Fork this repository using your personal github account
 - Clone the forked repository to access the codebase on your local machine
+### Normal process for starting work
+- Sync personal repository with lab repository
+- Pull down changes
 - Make changes in RStudio
+- Commit changes
+- Push to Github
+- Make and accept a pull request to incorporate changes into lab repository
+
+### Generate a New Report
 - Open master.Rmd
 - Click dropdown on Knit, select "Knit with Parameters"
 - Enter name and date. Select data to use and whether to include code in output
 - Once report has been generated, review the temporary HTML
-- If satisfied with results, commit all changes
-- Push to Github
-- Make and accept a pull request to incorporate changes into lab repository
 
 ## Features to add
 - [ ] Data processing for CH
