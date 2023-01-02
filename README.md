@@ -36,6 +36,7 @@ To view the latest stable report, click master.md above.
 - [ ] histology variable
 - [ ] Table of population characteristics
 - [ ] Incidence rate of phenotype
+- [ ] Number of subjects excluded during filtering
 - [ ] Number of subjects
 - [ ] Distributions of all relevant variables
 - [ ] Pearson correlation coefficients between pollutants
