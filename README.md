@@ -33,4 +33,4 @@ To view the latest stable report, click master.md above.
 - [ ] Lung PRS
 
 ## Future Ideas
-- [ ] Explore Genetic Analysis of Time-to-Event phenotypes (GATE) Method to adjust for population structure, sample relatedness, and p-vale inflation due to very low-frequency variants and heavily censored phenotypes
+- [ ] Explore Genetic Analysis of Time-to-Event phenotypes (GATE) Method to adjust for population structure, sample relatedness, and p-value inflation due to very low-frequency variants and heavily censored phenotypes
