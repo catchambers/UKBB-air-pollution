@@ -20,7 +20,7 @@ bibliography: references.bib
 ##### `r params$author` \| `r params$date`
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = params$printcode, fig.width = 4, fig.height = 4)
+knitr::opts_chunk$set(echo = params$printcode, out.width = 4, out.height = 4)
 
 libraries <- c("survival", "ggplot2", "rstudioapi", "readr", "dplyr", "data.table",
                "shiny", "knitr")
@@ -32,7 +32,7 @@ source("data_process.R")  #load functions
 
 ```
 
-```{r data-processing, include=FALSE}
+```{r data-processing, include = FALSE, cache = TRUE}
 
 df <- get_data(params$condition) #generate data frame for selected data
 attach(df)
@@ -158,7 +158,7 @@ hist(pm25_2010,
 
 ### Scatter Plots and Correlation Coefficients: pollutants
 
-```{r scatterplot-PM10-NO2,}
+```{r scatterplot-PM10-NO2}
 plot(pm10_2010, no2_2010)
 cor(pm10_2010, no2_2010, method="pearson", use="complete.obs")
 cor(pm10_2010, no2_2010, method="spearman", use="complete.obs")
