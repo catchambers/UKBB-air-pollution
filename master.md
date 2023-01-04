@@ -1,7 +1,7 @@
 Air Pollution and Health Outcomes in the UK Biobank
 ================
 Caitlyn Chitwood
-Sys.Date()
+January 04, 2023
 
 - <a href="#descriptive-statistics"
   id="toc-descriptive-statistics">Descriptive Statistics</a>
@@ -21,13 +21,13 @@ Sys.Date()
     - <a href="#qq-plot" id="toc-qq-plot">QQ Plot</a>
     - <a href="#outliers" id="toc-outliers">Outliers</a>
     - <a
-      href="#correlation-coeffiecients-pollutant-extreme-outliers-and-covariates"
-      id="toc-correlation-coeffiecients-pollutant-extreme-outliers-and-covariates">Correlation
-      Coeffiecients: pollutant extreme outliers and covariates</a>
+      href="#correlation-coefficients-pollutant-extreme-outliers-and-covariates"
+      id="toc-correlation-coefficients-pollutant-extreme-outliers-and-covariates">Correlation
+      Coefficients: pollutant extreme outliers and covariates</a>
     - <a
-      href="#correlation-coeffiecients-pollutant-mild-outliers-and-covariates"
-      id="toc-correlation-coeffiecients-pollutant-mild-outliers-and-covariates">Correlation
-      Coeffiecients: pollutant mild outliers and covariates</a>
+      href="#correlation-coefficients-pollutant-mild-outliers-and-covariates"
+      id="toc-correlation-coefficients-pollutant-mild-outliers-and-covariates">Correlation
+      Coefficients: pollutant mild outliers and covariates</a>
 - <a href="#regression-cox-proportional-hazards-model"
   id="toc-regression-cox-proportional-hazards-model">Regression: Cox
   Proportional-Hazards Model</a>
@@ -45,9 +45,9 @@ Lung cancer data was used for the following analyses.
 ### Summary Statistics
 
 ``` r
-lungcancer <- table(lung_cancer)
-
-kable(head(df))
+kable(head(df_pheno),
+      caption = "A table showing first 6 rows of relevant variables.",
+      )
 ```
 
 |     eid |  townsend |     bmi | householdIncomeCat   | dateAssesment | pm10_2007 | pm10_2010 | pm25Absorb_2010 | pm25_2010 | pmcourse_2010 | no2_2005 | no2_2006 | no2_2007 | no2_2010 | no1_2010 | fuel                                                                      | education                                                                                                                                             | exposeSmokeHomeRaw | timeCurrentAddress | dateLostFollowUp | dateCensor | dateCutoff | date_of_death | ageBaseline | race  | sex    | packYear | smokingCat                    | pm10_2007per10 | pm10_2010per10 | pm25_2010per5 | pmcourse_2010per5 | no2_2005per10 | no2_2006per10 | no2_2007per10 | no2_2010per10 | no1_2010per20 | baselineDate | dob        | cancerDate | cancerICD10 | cancerHistology | cancerBehaviour         | meaning                              | ICD10group | prior_cancer | lung_cancer | t_lungCancer | cancerDate_Lung |
@@ -59,23 +59,25 @@ kable(head(df))
 | 1000051 | -1.003240 | 28.3711 | Prefer not to answer | 2008-01-11    |     20.03 |     17.23 |            1.36 |     10.58 |          6.49 |    26.38 |    25.73 |    26.38 |    33.02 |    52.70 | A gas hob or gas cooker\|A gas fire that you use regularly in winter time | College or University degree\|A levels/AS levels or equivalent\|O levels/GCSEs or equivalent\|Other professional qualifications eg: nursing, teaching | 0                  | 43                 | NA               | 2020-02-29 | 2020-02-29 | 2015-10-19    |    67.73990 | White | Male   |     5.20 | Past smoker 1-19 pack year    |          2.003 |          1.723 |         2.116 |             1.298 |         2.638 |         2.573 |         2.638 |         3.302 |        2.6350 | 1/11/2008    | 4/15/1940  | 9/10/2015  | C930        |            9891 | Malignant, primary site | C93.0 Acute monocytic leukaemia      | NA         |            0 |           0 |           NA | NA              |
 | 1000066 | -0.541713 | 42.4953 | 18,000 to 30,999     | 2007-05-08    |     22.85 |     14.56 |            0.98 |      9.84 |          5.84 |    25.57 |    23.88 |    26.49 |    23.43 |    31.54 | A gas hob or gas cooker                                                   | O levels/GCSEs or equivalent\|CSEs or equivalent\|NVQ or HND or HNC or equivalent                                                                     | NA                 | 10                 | NA               | 2020-02-29 | 2020-02-29 | NA            |    42.89391 | White | Female |    18.75 | Current smoker 1-19 pack year |          2.285 |          1.456 |         1.968 |             1.168 |         2.557 |         2.388 |         2.649 |         2.343 |        1.5770 | NA           | NA         | NA         | NA          |              NA | NA                      | NA                                   | NA         |            0 |           0 |           NA | NA              |
 
+A table showing first 6 rows of relevant variables.
+
 There are 4081 cases of lung cancer in the data set.
 
 ### Density Plots
 
 ``` r
-kd_male <- density(na.omit(pm10_2007[df$sex=="Male"])) #define kernel density
+kd_male <- density(na.omit(pm10_2007[sex=="Male"])) #define kernel density
 plot(kd_male,
      col='blue',
      lwd=2,
      main = "Female/Male PM10_2007") #create kernel density plot
-kd_female <- density(na.omit(pm10_2007[df$sex=="Female"]))
+kd_female <- density(na.omit(pm10_2007[sex=="Female"]))
 lines(kd_female,
       col='red',
       lwd=2)
 ```
 
-<img src="master_files/figure-gfm/density-plot-sex-1.png" width="4" height="4" />
+![](master_files/figure-gfm/density-plot-sex-1.png)<!-- -->
 
 ``` r
 # fill in kernel density plot with specific color
@@ -84,19 +86,19 @@ lines(kd_female,
 ```
 
 ``` r
-x1 = na.omit(pm10_2007[df$ageBaseline>=60])
-x2 = na.omit(pm10_2007[df$ageBaseline<60])
+x1 = na.omit(pm10_2007[ageBaseline>=60])
+x2 = na.omit(pm10_2007[ageBaseline<60])
 plot_mult_density("pm10_2007 (blue=60 or over, red=under 60)", x1,x2)
 ```
 
-<img src="master_files/figure-gfm/density-plots-1.png" width="4" height="4" />
+![](master_files/figure-gfm/density-plots-1.png)<!-- -->
 
 ### Histograms
 
 ``` r
 #define data
-x1 = na.omit(pm10_2007[df$ageBaseline>=60])
-x2 = na.omit(pm10_2007[df$ageBaseline<60])
+x1 = na.omit(pm10_2007[ageBaseline>=60])
+x2 = na.omit(pm10_2007[ageBaseline<60])
 
 #plot two histograms in same graph
 hist(x1, col='red', main='pm10_2007', xlab='(μg/m3)')
@@ -106,7 +108,7 @@ hist(x2, col='green', add=TRUE)
 legend('topright', c('60 or Over', 'Under 60'), fill=c('red', 'green'))
 ```
 
-<img src="master_files/figure-gfm/histogram-age-1.png" width="4" height="4" />
+![](master_files/figure-gfm/histogram-age-1.png)<!-- -->
 
 ``` r
 hist(pm25_2010, 
@@ -117,12 +119,16 @@ hist(pm25_2010,
      ylim=c(0,0.7))
 
 #Plot lognormal distribution
-xfit <- seq(min(pm25_2010, na.rm=TRUE), max(pm25_2010, na.rm=TRUE), length=40)
-yfit <- dlnorm(xfit,meanlog=log(mean(pm25_2010)), sdlog=log(sd(pm25_2010)))
-lines(xfit, yfit, col="black", lwd=2)
+xfit <- seq(min(pm25_2010, na.rm = TRUE),
+            max(pm25_2010, na.rm = TRUE),
+            length = 40)
+yfit <- dlnorm(xfit,
+               meanlog = log(mean(pm25_2010)),
+               sdlog = log(sd(pm25_2010)))
+lines(xfit, yfit, col = "black", lwd = 2)
 ```
 
-<img src="master_files/figure-gfm/histogram-1.png" width="4" height="4" />
+![](master_files/figure-gfm/histogram-1.png)<!-- -->
 
 The distribution is right-skewed and appears to be a log normal
 distribution.
@@ -175,7 +181,7 @@ hist(pm25_2010,
      freq=FALSE)
 ```
 
-<img src="master_files/figure-gfm/histogram2-1.png" width="4" height="4" />
+![](master_files/figure-gfm/histogram2-1.png)<!-- -->
 
 ### Scatter Plots and Correlation Coefficients: pollutants
 
@@ -183,7 +189,7 @@ hist(pm25_2010,
 plot(pm10_2010, no2_2010)
 ```
 
-<img src="master_files/figure-gfm/scatterplot-PM10-NO2-1.png" width="4" height="4" />
+![](master_files/figure-gfm/scatterplot-PM10-NO2-1.png)<!-- -->
 
 ``` r
 cor(pm10_2010, no2_2010, method="pearson", use="complete.obs")
@@ -201,7 +207,7 @@ cor(pm10_2010, no2_2010, method="spearman", use="complete.obs")
 plot(pm10_2010,pm25_2010)
 ```
 
-<img src="master_files/figure-gfm/scatterplot-PM10-PM2.5-1.png" width="4" height="4" />
+![](master_files/figure-gfm/scatterplot-PM10-PM2.5-1.png)<!-- -->
 
 ``` r
 cor(pm10_2010, pm25_2010, method="pearson", use="complete.obs")
@@ -219,7 +225,7 @@ cor(pm10_2010, pm25_2010, method="spearman", use="complete.obs")
 plot(no1_2010, no2_2010)
 ```
 
-<img src="master_files/figure-gfm/scatterplot-NO1-NO2-1.png" width="4" height="4" />
+![](master_files/figure-gfm/scatterplot-NO1-NO2-1.png)<!-- -->
 
 ``` r
 cor(no1_2010, no2_2010, method="pearson", use="complete.obs")
@@ -272,7 +278,7 @@ boxplot(pm25_2010,
         col="cadetblue")
 ```
 
-<img src="master_files/figure-gfm/boxplot-1.png" width="4" height="4" />
+![](master_files/figure-gfm/boxplot-1.png)<!-- -->
 
 #### QQ Plot
 
@@ -281,7 +287,7 @@ qqnorm(pm25_2010)
 qqline(pm25_2010)
 ```
 
-<img src="master_files/figure-gfm/qqplot-1.png" width="4" height="4" />
+![](master_files/figure-gfm/qqplot-1.png)<!-- -->
 
 #### Outliers
 
@@ -289,14 +295,14 @@ qqline(pm25_2010)
 extremeOut <- 3*iqr
 mildOut <- 1.5*iqr
 
-extremePM25 <- subset(df, pm25_2010 > (mean(pm25_2010, na.rm=TRUE)+ extremeOut))
-mildPM25 <- subset(df, pm25_2010 > (mean(pm25_2010, na.rm=TRUE)+ mildOut))
+extremePM25 <- subset(df_pheno, pm25_2010 > (mean(pm25_2010, na.rm=TRUE)+ extremeOut))
+mildPM25 <- subset(df_pheno, pm25_2010 > (mean(pm25_2010, na.rm=TRUE)+ mildOut))
 ```
 
 There are 958 extreme outliers and 20992 mild outliers for PM2.5 data
 from 2010.
 
-#### Correlation Coeffiecients: pollutant extreme outliers and covariates
+#### Correlation Coefficients: pollutant extreme outliers and covariates
 
 ``` r
 cor(extremePM25$pm25_2010, extremePM25$ageBaseline)
@@ -316,7 +322,7 @@ cor(extremePM25$pm25_2010, extremePM25$packYear, use="pairwise.complete.obs")
 
     ## [1] -0.01779504
 
-#### Correlation Coeffiecients: pollutant mild outliers and covariates
+#### Correlation Coefficients: pollutant mild outliers and covariates
 
 ``` r
 cor(mildPM25$pm25_2010, mildPM25$ageBaseline, use="pairwise.complete.obs")
@@ -347,7 +353,7 @@ rm(mildPM25, extremePM25)
 ``` r
 res.model1 <- coxph(
   Surv(t_lungCancer, lung_cancer) ~  pm25_2010per5 + ageBaseline + sex,
-  data = df,
+  data = df_pheno,
   ties = "efron"
 )
 res.model1
@@ -355,7 +361,7 @@ res.model1
 
     ## Call:
     ## coxph(formula = Surv(t_lungCancer, lung_cancer) ~ pm25_2010per5 + 
-    ##     ageBaseline + sex, data = df, ties = "efron")
+    ##     ageBaseline + sex, data = df_pheno, ties = "efron")
     ## 
     ##                    coef exp(coef)  se(coef)      z       p
     ## pm25_2010per5 -0.117509  0.889132  0.075179 -1.563 0.11804
@@ -371,7 +377,7 @@ res.model1
 ``` r
 res.model2 <- coxph(
   Surv(t_lungCancer, lung_cancer) ~ pm25_2010per5 + ageBaseline + sex + householdIncomeCat + education + bmi + smokingCat +  exposeSmokeHomeRaw,
-  data = df,
+  data = df_pheno,
   ties = "efron"
 )
 res.model2
@@ -380,7 +386,7 @@ res.model2
     ## Call:
     ## coxph(formula = Surv(t_lungCancer, lung_cancer) ~ pm25_2010per5 + 
     ##     ageBaseline + sex + householdIncomeCat + education + bmi + 
-    ##     smokingCat + exposeSmokeHomeRaw, data = df, ties = "efron")
+    ##     smokingCat + exposeSmokeHomeRaw, data = df_pheno, ties = "efron")
     ## 
     ##                                                                                                                                                                                                  coef
     ## pm25_2010per5                                                                                                                                                                               -0.084814

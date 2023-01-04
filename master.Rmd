@@ -5,7 +5,7 @@ output:
     toc: true
     toc_depth: 4
 author: "Caitlyn Chitwood"
-date: "`r format(Sys.time(), '%d %B, %Y')`"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
 params:
   condition:
     label: "Select Condition (LC = Lung Cancer, CH = Clonal Hematopoiesis)"
@@ -19,7 +19,7 @@ bibliography: references.bib
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = params$printcode, out.width = 4, out.height = 4)
+knitr::opts_chunk$set(echo = params$printcode)
 
 libraries <- c("survival", "ggplot2", "rstudioapi", "readr", "dplyr", "data.table",
                "shiny", "knitr")
@@ -45,15 +45,12 @@ attach(df_pheno)
 ### Summary Statistics
 
 ```{r summary}
-lungcancer <- table(lung_cancer)
-
 kable(head(df_pheno),
-      col.names = TRUE,
       caption = "A table showing first 6 rows of relevant variables.",
       )
 ```
 
-There are `r lungcancer[2]` cases of lung cancer in the data set.
+There are `r sum(lung_cancer)` cases of lung cancer in the data set.
 
 ### Density Plots
 
@@ -103,9 +100,13 @@ hist(pm25_2010,
      ylim=c(0,0.7))
 
 #Plot lognormal distribution
-xfit <- seq(min(pm25_2010, na.rm=TRUE), max(pm25_2010, na.rm=TRUE), length=40)
-yfit <- dlnorm(xfit,meanlog=log(mean(pm25_2010)), sdlog=log(sd(pm25_2010)))
-lines(xfit, yfit, col="black", lwd=2)
+xfit <- seq(min(pm25_2010, na.rm = TRUE),
+            max(pm25_2010, na.rm = TRUE),
+            length = 40)
+yfit <- dlnorm(xfit,
+               meanlog = log(mean(pm25_2010)),
+               sdlog = log(sd(pm25_2010)))
+lines(xfit, yfit, col = "black", lwd = 2)
 
 ```
 
