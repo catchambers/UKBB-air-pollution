@@ -26,10 +26,32 @@ To view the latest stable report, click master.md above.
 - Once report has been generated, review the temporary HTML
 
 ## Features to add
+- [ ] Make bmiCat factor variable (Normal (<25 kg/m2), Overweight (25–29.9 kg/m2), Obesity (>=30 kg/m2, Missing value)
+- [ ] Make pack-years of smoking numeric variable
+- [ ] Simplify education levels. Include each participant in only one level. (Degree level or professional education, Other levels, Missing value)
+- [ ] Simplify householdIncomeCat (Less than £31,000, £31,000 and above, Missing value)
+- [ ] Simplify smokingCat (Never-smoker, Current or former smoker, Missing value)
+- [ ] Simplify fuel (yes/no gas or solid-fuel cooking/heating in home, Missing value)
+- [ ] Make exposeSmokeHome factor variable. Remove raw variable from model
+- [ ] histology variable
+- [ ] Table of population characteristics
+- [ ] Incidence rate of phenotype
+- [ ] Number of subjects excluded during filtering
+- [ ] Number of subjects
+- [ ] Distributions of all relevant variables
+- [ ] Pearson correlation coefficients between pollutants
+- [ ] Pearson correlation coefficients between covariates
 - [ ] Data processing for CH
 - [ ] Update CH file when latest results become available (200k participants currently)
 - [ ] Test running on cluster. Update filepaths as needed
-- [ ] Paper uses exposeSmokeHomeImputed, bmiCat, and lungFamilyHistory. These variables haven't been generated
-- [ ] Lung PRS
+- [ ] Lung PRS - ask Xiaoyu for this data
+- [ ] Check for violation of proportional hazard (constant HR over time)
+- [ ] Model all pollutants
+- [ ] Tabs for navigating between pollutants
+- [ ] Stratified analyses (Sex, Age, Obesity, Smoking Status, Household Income, Histology)
 
 ## Future Ideas
+- [ ] Explore Genetic Analysis of Time-to-Event phenotypes (GATE) Method to adjust for population structure, sample relatedness, and p-value inflation due to very low-frequency variants and heavily censored phenotypes
+- [ ] Replace dense scatter plots with hexplots
+- [ ] Generate exposeSmokeHomeImputed using mice package
+- [ ] Sensitivity Analyses
