@@ -1,5 +1,7 @@
 Air Pollution and Health Outcomes in the UK Biobank
 ================
+Caitlyn Chitwood
+Sys.Date()
 
 - <a href="#descriptive-statistics"
   id="toc-descriptive-statistics">Descriptive Statistics</a>
@@ -15,6 +17,17 @@ Air Pollution and Health Outcomes in the UK Biobank
     id="toc-scatter-plots-and-correlation-coefficients-pollutants-and-covariates">Scatter
     Plots and Correlation Coefficients: pollutants and covariates</a>
   - <a href="#pm-25" id="toc-pm-25">PM 2.5</a>
+    - <a href="#box-plot" id="toc-box-plot">Box Plot</a>
+    - <a href="#qq-plot" id="toc-qq-plot">QQ Plot</a>
+    - <a href="#outliers" id="toc-outliers">Outliers</a>
+    - <a
+      href="#correlation-coeffiecients-pollutant-extreme-outliers-and-covariates"
+      id="toc-correlation-coeffiecients-pollutant-extreme-outliers-and-covariates">Correlation
+      Coeffiecients: pollutant extreme outliers and covariates</a>
+    - <a
+      href="#correlation-coeffiecients-pollutant-mild-outliers-and-covariates"
+      id="toc-correlation-coeffiecients-pollutant-mild-outliers-and-covariates">Correlation
+      Coeffiecients: pollutant mild outliers and covariates</a>
 - <a href="#regression-cox-proportional-hazards-model"
   id="toc-regression-cox-proportional-hazards-model">Regression: Cox
   Proportional-Hazards Model</a>
@@ -25,8 +38,6 @@ Air Pollution and Health Outcomes in the UK Biobank
     id="toc-model-2-multiple-covariates">Model 2: multiple covariates</a>
 - <a href="#citations" id="toc-citations">Citations</a>
 
-##### Caitlyn Chitwood \| 2022-12-30
-
 Lung cancer data was used for the following analyses.
 
 ## Descriptive Statistics
@@ -36,93 +47,17 @@ Lung cancer data was used for the following analyses.
 ``` r
 lungcancer <- table(lung_cancer)
 
-head(df)
+kable(head(df))
 ```
 
-    ##       eid  townsend     bmi   householdIncomeCat dateAssesment pm10_2007
-    ## 1 1000018 -4.517900 24.1274     31,000 to 51,999    2009-05-23     24.13
-    ## 2 1000020 -3.607660 28.9216     31,000 to 51,999    2007-08-03     21.08
-    ## 3 1000037 -1.198350 32.7558 Prefer not to answer    2009-11-05     25.50
-    ## 4 1000043  4.682530 26.7563    52,000 to 100,000    2007-05-12     26.95
-    ## 5 1000051 -1.003240 28.3711 Prefer not to answer    2008-01-11     20.03
-    ## 6 1000066 -0.541713 42.4953     18,000 to 30,999    2007-05-08     22.85
-    ##   pm10_2010 pm25Absorb_2010 pm25_2010 pmcourse_2010 no2_2005 no2_2006 no2_2007
-    ## 1     15.98            1.15     10.32          6.00    29.48    29.65    30.31
-    ## 2     17.15            1.00      9.37          6.70    20.61    19.94    21.93
-    ## 3     14.04            0.89      9.54          5.61    19.12    18.02    20.65
-    ## 4     16.66            1.43     10.38          6.24    50.80    48.50    53.12
-    ## 5     17.23            1.36     10.58          6.49    26.38    25.73    26.38
-    ## 6     14.56            0.98      9.84          5.84    25.57    23.88    26.49
-    ##   no2_2010 no1_2010
-    ## 1    29.92    46.81
-    ## 2    17.50    33.00
-    ## 3    19.66    38.84
-    ## 4    34.31    51.70
-    ## 5    33.02    52.70
-    ## 6    23.43    31.54
-    ##                                                                       fuel
-    ## 1                                                  A gas hob or gas cooker
-    ## 2                                                        None of the above
-    ## 3                                                  A gas hob or gas cooker
-    ## 4                                                        None of the above
-    ## 5 A gas hob or gas cooker|A gas fire that you use regularly in winter time
-    ## 6                                                  A gas hob or gas cooker
-    ##                                                                                                                                            education
-    ## 1                                                                                       O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent
-    ## 2                                                                                                                                 CSEs or equivalent
-    ## 3                                                                                                                       O levels/GCSEs or equivalent
-    ## 4                                                                                                                       College or University degree
-    ## 5 College or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching
-    ## 6                                                                    O levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent
-    ##   exposeSmokeHomeRaw timeCurrentAddress dateLostFollowUp dateCensor dateCutoff
-    ## 1                  0                  4             <NA> 2020-02-29 2020-02-29
-    ## 2                  0                 27             <NA> 2020-02-29 2020-02-29
-    ## 3                 45                 21             <NA> 2020-02-29 2020-02-29
-    ## 4                  0                  7             <NA> 2020-02-29 2020-02-29
-    ## 5                  0                 43             <NA> 2020-02-29 2020-02-29
-    ## 6               <NA>                 10             <NA> 2020-02-29 2020-02-29
-    ##   date_of_death ageBaseline  race    sex packYear                    smokingCat
-    ## 1          <NA>    43.51814 White   Male       NA Past smoker unknown pack year
-    ## 2          <NA>    57.13347 White Female     0.00                  Never smoker
-    ## 3          <NA>    60.05749 White Female    76.00     Past smoker >19 pack year
-    ## 4          <NA>    60.82409 White   Male       NA Past smoker unknown pack year
-    ## 5    2015-10-19    67.73990 White   Male     5.20    Past smoker 1-19 pack year
-    ## 6          <NA>    42.89391 White Female    18.75 Current smoker 1-19 pack year
-    ##   pm10_2007per10 pm10_2010per10 pm25_2010per5 pmcourse_2010per5 no2_2005per10
-    ## 1          2.413          1.598         2.064             1.200         2.948
-    ## 2          2.108          1.715         1.874             1.340         2.061
-    ## 3          2.550          1.404         1.908             1.122         1.912
-    ## 4          2.695          1.666         2.076             1.248         5.080
-    ## 5          2.003          1.723         2.116             1.298         2.638
-    ## 6          2.285          1.456         1.968             1.168         2.557
-    ##   no2_2006per10 no2_2007per10 no2_2010per10 no1_2010per20 baselineDate
-    ## 1         2.965         3.031         2.992        2.3405    5/23/2009
-    ## 2         1.994         2.193         1.750        1.6500         <NA>
-    ## 3         1.802         2.065         1.966        1.9420    11/5/2009
-    ## 4         4.850         5.312         3.431        2.5850         <NA>
-    ## 5         2.573         2.638         3.302        2.6350    1/11/2008
-    ## 6         2.388         2.649         2.343        1.5770         <NA>
-    ##          dob cancerDate cancerICD10 cancerHistology         cancerBehaviour
-    ## 1 11/15/1965  7/23/2015        C822            9698 Malignant, primary site
-    ## 2       <NA>       <NA>        <NA>              NA                    <NA>
-    ## 3 10/15/1949 10/22/2013        C504            8500 Malignant, primary site
-    ## 4       <NA>       <NA>        <NA>              NA                    <NA>
-    ## 5  4/15/1940  9/10/2015        C930            9891 Malignant, primary site
-    ## 6       <NA>       <NA>        <NA>              NA                    <NA>
-    ##                                meaning ICD10group prior_cancer lung_cancer
-    ## 1         C82.2 Large cell, follicular       <NA>            0           0
-    ## 2                                 <NA>       <NA>            0           0
-    ## 3 C50.4 Upper-outer quadrant of breast        C50            0           0
-    ## 4                                 <NA>       <NA>            0           0
-    ## 5      C93.0 Acute monocytic leukaemia       <NA>            0           0
-    ## 6                                 <NA>       <NA>            0           0
-    ##   t_lungCancer cancerDate_Lung
-    ## 1           NA            <NA>
-    ## 2           NA            <NA>
-    ## 3           NA            <NA>
-    ## 4           NA            <NA>
-    ## 5           NA            <NA>
-    ## 6           NA            <NA>
+|     eid |  townsend |     bmi | householdIncomeCat   | dateAssesment | pm10_2007 | pm10_2010 | pm25Absorb_2010 | pm25_2010 | pmcourse_2010 | no2_2005 | no2_2006 | no2_2007 | no2_2010 | no1_2010 | fuel                                                                      | education                                                                                                                                             | exposeSmokeHomeRaw | timeCurrentAddress | dateLostFollowUp | dateCensor | dateCutoff | date_of_death | ageBaseline | race  | sex    | packYear | smokingCat                    | pm10_2007per10 | pm10_2010per10 | pm25_2010per5 | pmcourse_2010per5 | no2_2005per10 | no2_2006per10 | no2_2007per10 | no2_2010per10 | no1_2010per20 | baselineDate | dob        | cancerDate | cancerICD10 | cancerHistology | cancerBehaviour         | meaning                              | ICD10group | prior_cancer | lung_cancer | t_lungCancer | cancerDate_Lung |
+|--------:|----------:|--------:|:---------------------|:--------------|----------:|----------:|----------------:|----------:|--------------:|---------:|---------:|---------:|---------:|---------:|:--------------------------------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------|:-------------------|:-------------------|:-----------------|:-----------|:-----------|:--------------|------------:|:------|:-------|---------:|:------------------------------|---------------:|---------------:|--------------:|------------------:|--------------:|--------------:|--------------:|--------------:|--------------:|:-------------|:-----------|:-----------|:------------|----------------:|:------------------------|:-------------------------------------|:-----------|-------------:|------------:|-------------:|:----------------|
+| 1000018 | -4.517900 | 24.1274 | 31,000 to 51,999     | 2009-05-23    |     24.13 |     15.98 |            1.15 |     10.32 |          6.00 |    29.48 |    29.65 |    30.31 |    29.92 |    46.81 | A gas hob or gas cooker                                                   | O levels/GCSEs or equivalent\|NVQ or HND or HNC or equivalent                                                                                         | 0                  | 4                  | NA               | 2020-02-29 | 2020-02-29 | NA            |    43.51814 | White | Male   |       NA | Past smoker unknown pack year |          2.413 |          1.598 |         2.064 |             1.200 |         2.948 |         2.965 |         3.031 |         2.992 |        2.3405 | 5/23/2009    | 11/15/1965 | 7/23/2015  | C822        |            9698 | Malignant, primary site | C82.2 Large cell, follicular         | NA         |            0 |           0 |           NA | NA              |
+| 1000020 | -3.607660 | 28.9216 | 31,000 to 51,999     | 2007-08-03    |     21.08 |     17.15 |            1.00 |      9.37 |          6.70 |    20.61 |    19.94 |    21.93 |    17.50 |    33.00 | None of the above                                                         | CSEs or equivalent                                                                                                                                    | 0                  | 27                 | NA               | 2020-02-29 | 2020-02-29 | NA            |    57.13347 | White | Female |     0.00 | Never smoker                  |          2.108 |          1.715 |         1.874 |             1.340 |         2.061 |         1.994 |         2.193 |         1.750 |        1.6500 | NA           | NA         | NA         | NA          |              NA | NA                      | NA                                   | NA         |            0 |           0 |           NA | NA              |
+| 1000037 | -1.198350 | 32.7558 | Prefer not to answer | 2009-11-05    |     25.50 |     14.04 |            0.89 |      9.54 |          5.61 |    19.12 |    18.02 |    20.65 |    19.66 |    38.84 | A gas hob or gas cooker                                                   | O levels/GCSEs or equivalent                                                                                                                          | 45                 | 21                 | NA               | 2020-02-29 | 2020-02-29 | NA            |    60.05749 | White | Female |    76.00 | Past smoker \>19 pack year    |          2.550 |          1.404 |         1.908 |             1.122 |         1.912 |         1.802 |         2.065 |         1.966 |        1.9420 | 11/5/2009    | 10/15/1949 | 10/22/2013 | C504        |            8500 | Malignant, primary site | C50.4 Upper-outer quadrant of breast | C50        |            0 |           0 |           NA | NA              |
+| 1000043 |  4.682530 | 26.7563 | 52,000 to 100,000    | 2007-05-12    |     26.95 |     16.66 |            1.43 |     10.38 |          6.24 |    50.80 |    48.50 |    53.12 |    34.31 |    51.70 | None of the above                                                         | College or University degree                                                                                                                          | 0                  | 7                  | NA               | 2020-02-29 | 2020-02-29 | NA            |    60.82409 | White | Male   |       NA | Past smoker unknown pack year |          2.695 |          1.666 |         2.076 |             1.248 |         5.080 |         4.850 |         5.312 |         3.431 |        2.5850 | NA           | NA         | NA         | NA          |              NA | NA                      | NA                                   | NA         |            0 |           0 |           NA | NA              |
+| 1000051 | -1.003240 | 28.3711 | Prefer not to answer | 2008-01-11    |     20.03 |     17.23 |            1.36 |     10.58 |          6.49 |    26.38 |    25.73 |    26.38 |    33.02 |    52.70 | A gas hob or gas cooker\|A gas fire that you use regularly in winter time | College or University degree\|A levels/AS levels or equivalent\|O levels/GCSEs or equivalent\|Other professional qualifications eg: nursing, teaching | 0                  | 43                 | NA               | 2020-02-29 | 2020-02-29 | 2015-10-19    |    67.73990 | White | Male   |     5.20 | Past smoker 1-19 pack year    |          2.003 |          1.723 |         2.116 |             1.298 |         2.638 |         2.573 |         2.638 |         3.302 |        2.6350 | 1/11/2008    | 4/15/1940  | 9/10/2015  | C930        |            9891 | Malignant, primary site | C93.0 Acute monocytic leukaemia      | NA         |            0 |           0 |           NA | NA              |
+| 1000066 | -0.541713 | 42.4953 | 18,000 to 30,999     | 2007-05-08    |     22.85 |     14.56 |            0.98 |      9.84 |          5.84 |    25.57 |    23.88 |    26.49 |    23.43 |    31.54 | A gas hob or gas cooker                                                   | O levels/GCSEs or equivalent\|CSEs or equivalent\|NVQ or HND or HNC or equivalent                                                                     | NA                 | 10                 | NA               | 2020-02-29 | 2020-02-29 | NA            |    42.89391 | White | Female |    18.75 | Current smoker 1-19 pack year |          2.285 |          1.456 |         1.968 |             1.168 |         2.557 |         2.388 |         2.649 |         2.343 |        1.5770 | NA           | NA         | NA         | NA          |              NA | NA                      | NA                                   | NA         |            0 |           0 |           NA | NA              |
 
 There are 4081 cases of lung cancer in the data set.
 
@@ -140,7 +75,7 @@ lines(kd_female,
       lwd=2)
 ```
 
-![](master_files/figure-gfm/density-plot-sex-1.png)<!-- -->
+<img src="master_files/figure-gfm/density-plot-sex-1.png" width="4" height="4" />
 
 ``` r
 # fill in kernel density plot with specific color
@@ -154,7 +89,7 @@ x2 = na.omit(pm10_2007[df$ageBaseline<60])
 plot_mult_density("pm10_2007 (blue=60 or over, red=under 60)", x1,x2)
 ```
 
-![](master_files/figure-gfm/density-plots-1.png)<!-- -->
+<img src="master_files/figure-gfm/density-plots-1.png" width="4" height="4" />
 
 ### Histograms
 
@@ -171,7 +106,7 @@ hist(x2, col='green', add=TRUE)
 legend('topright', c('60 or Over', 'Under 60'), fill=c('red', 'green'))
 ```
 
-![](master_files/figure-gfm/histogram-age-1.png)<!-- -->
+<img src="master_files/figure-gfm/histogram-age-1.png" width="4" height="4" />
 
 ``` r
 hist(pm25_2010, 
@@ -187,7 +122,7 @@ yfit <- dlnorm(xfit,meanlog=log(mean(pm25_2010)), sdlog=log(sd(pm25_2010)))
 lines(xfit, yfit, col="black", lwd=2)
 ```
 
-![](master_files/figure-gfm/histogram-1.png)<!-- -->
+<img src="master_files/figure-gfm/histogram-1.png" width="4" height="4" />
 
 The distribution is right-skewed and appears to be a log normal
 distribution.
@@ -240,7 +175,7 @@ hist(pm25_2010,
      freq=FALSE)
 ```
 
-![](master_files/figure-gfm/histogram2-1.png)<!-- -->
+<img src="master_files/figure-gfm/histogram2-1.png" width="4" height="4" />
 
 ### Scatter Plots and Correlation Coefficients: pollutants
 
@@ -248,7 +183,7 @@ hist(pm25_2010,
 plot(pm10_2010, no2_2010)
 ```
 
-![](master_files/figure-gfm/scatterplot-PM10-NO2-1.png)<!-- -->
+<img src="master_files/figure-gfm/scatterplot-PM10-NO2-1.png" width="4" height="4" />
 
 ``` r
 cor(pm10_2010, no2_2010, method="pearson", use="complete.obs")
@@ -266,7 +201,7 @@ cor(pm10_2010, no2_2010, method="spearman", use="complete.obs")
 plot(pm10_2010,pm25_2010)
 ```
 
-![](master_files/figure-gfm/scatterplot-PM10-PM2.5-1.png)<!-- -->
+<img src="master_files/figure-gfm/scatterplot-PM10-PM2.5-1.png" width="4" height="4" />
 
 ``` r
 cor(pm10_2010, pm25_2010, method="pearson", use="complete.obs")
@@ -284,7 +219,7 @@ cor(pm10_2010, pm25_2010, method="spearman", use="complete.obs")
 plot(no1_2010, no2_2010)
 ```
 
-![](master_files/figure-gfm/scatterplot-NO1-NO2-1.png)<!-- -->
+<img src="master_files/figure-gfm/scatterplot-NO1-NO2-1.png" width="4" height="4" />
 
 ``` r
 cor(no1_2010, no2_2010, method="pearson", use="complete.obs")
@@ -337,7 +272,7 @@ boxplot(pm25_2010,
         col="cadetblue")
 ```
 
-![](master_files/figure-gfm/boxplot-1.png)<!-- -->
+<img src="master_files/figure-gfm/boxplot-1.png" width="4" height="4" />
 
 #### QQ Plot
 
@@ -346,7 +281,7 @@ qqnorm(pm25_2010)
 qqline(pm25_2010)
 ```
 
-![](master_files/figure-gfm/qqplot-1.png)<!-- -->
+<img src="master_files/figure-gfm/qqplot-1.png" width="4" height="4" />
 
 #### Outliers
 

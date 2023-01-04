@@ -26,3 +26,7 @@ Statistical Analyses
   
 Data Filtering -----------------------------------------------------------
 Excluded individuals with prevalent cancer (either solid tumor or hematologic).
+
+Programming References ---------------------------------------------------
+Cox Regression in R:
+https://rstudio-pubs-static.s3.amazonaws.com/5896_8f0fed2ccbbd42489276e554a05af87e.html

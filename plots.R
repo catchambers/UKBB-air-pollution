@@ -1,11 +1,11 @@
-###############################################################################
+#______________________________________________________________________________
 #                         PLOTTING SCRIPT
 # This script contains functions used for visualization and analysis.
-###############################################################################
+#______________________________________________________________________________
 
 
-# Density Plots -----------------------------------------------------------
-#Density plot function
+# Density Plot ------------------------------------------------------------
+# Overlay multiple density plots function
 plot_mult_density <- function(variable, data1, data2, data3=NULL){
   kd <- density(data1) #define kernel density
   plot(kd,
@@ -60,5 +60,5 @@ plot_mult_density <- function(variable, data1, data2, data3=NULL){
 # x2 = na.omit(no1_2010[df$lung_cancer==0])
 # plot_mult_density("no1_2010 (blue=Lung Cancer, red=No Lung Cancer)", x1,x2)
 
-# Histograms --------------------------------------------------------------
+# Histogram ---------------------------------------------------------------
 
