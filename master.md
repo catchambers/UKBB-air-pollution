@@ -1,7 +1,7 @@
 Air Pollution and Health Outcomes in the UK Biobank
 ================
-Caitlyn Chitwood
-January 04, 2023
+Caitlyn Chitwood -
+January 05, 2023
 
 - <a href="#descriptive-statistics"
   id="toc-descriptive-statistics">Descriptive Statistics</a>
@@ -34,6 +34,8 @@ January 04, 2023
   - <a href="#model-1-age-and-sex-covariates-only"
     id="toc-model-1-age-and-sex-covariates-only">Model 1: age and sex
     covariates only</a>
+    - <a href="#pm25-2010" id="toc-pm25-2010">PM2.5 (2010)</a>
+    - <a href="#pm25-2010-1" id="toc-pm25-2010-1">PM2.5 (2010)</a>
   - <a href="#model-2-multiple-covariates"
     id="toc-model-2-multiple-covariates">Model 2: multiple covariates</a>
 - <a href="#citations" id="toc-citations">Citations</a>
@@ -46,8 +48,7 @@ Lung cancer data was used for the following analyses.
 
 ``` r
 kable(head(df_pheno),
-      caption = "A table showing first 6 rows of relevant variables.",
-      )
+      caption = "A table showing first 6 rows of relevant variables.")
 ```
 
 |     eid |  townsend |     bmi | householdIncomeCat   | dateAssesment | pm10_2007 | pm10_2010 | pm25Absorb_2010 | pm25_2010 | pmcourse_2010 | no2_2005 | no2_2006 | no2_2007 | no2_2010 | no1_2010 | fuel                                                                      | education                                                                                                                                             | exposeSmokeHomeRaw | timeCurrentAddress | dateLostFollowUp | dateCensor | dateCutoff | date_of_death | ageBaseline | race  | sex    | packYear | smokingCat                    | pm10_2007per10 | pm10_2010per10 | pm25_2010per5 | pmcourse_2010per5 | no2_2005per10 | no2_2006per10 | no2_2007per10 | no2_2010per10 | no1_2010per20 | baselineDate | dob        | cancerDate | cancerICD10 | cancerHistology | cancerBehaviour         | meaning                              | ICD10group | prior_cancer | lung_cancer | t_lungCancer | cancerDate_Lung |
@@ -350,33 +351,23 @@ rm(mildPM25, extremePM25)
 
 ### Model 1: age and sex covariates only
 
+#### PM2.5 (2010)
+
 ``` r
 res.model1 <- coxph(
   Surv(t_lungCancer, lung_cancer) ~  pm25_2010per5 + ageBaseline + sex,
   data = df_pheno,
   ties = "efron"
 )
-res.model1
 ```
 
-    ## Call:
-    ## coxph(formula = Surv(t_lungCancer, lung_cancer) ~ pm25_2010per5 + 
-    ##     ageBaseline + sex, data = df_pheno, ties = "efron")
-    ## 
-    ##                    coef exp(coef)  se(coef)      z       p
-    ## pm25_2010per5 -0.117509  0.889132  0.075179 -1.563 0.11804
-    ## ageBaseline    0.008948  1.008988  0.002856  3.133 0.00173
-    ## sexMale        0.049517  1.050763  0.032661  1.516 0.12950
-    ## 
-    ## Likelihood ratio test=15.82  on 3 df, p=0.001232
-    ## n= 3764, number of events= 3764 
-    ##    (478018 observations deleted due to missingness)
+#### PM2.5 (2010)
 
 ### Model 2: multiple covariates
 
 ``` r
 res.model2 <- coxph(
-  Surv(t_lungCancer, lung_cancer) ~ pm25_2010per5 + ageBaseline + sex + householdIncomeCat + education + bmi + smokingCat +  exposeSmokeHomeRaw,
+  Surv(t_lungCancer, lung_cancer) ~ pm25_2010per5 + ageBaseline + sex + householdIncomeCat + education + bmi + smokingCat,
   data = df_pheno,
   ties = "efron"
 )
@@ -386,477 +377,357 @@ res.model2
     ## Call:
     ## coxph(formula = Surv(t_lungCancer, lung_cancer) ~ pm25_2010per5 + 
     ##     ageBaseline + sex + householdIncomeCat + education + bmi + 
-    ##     smokingCat + exposeSmokeHomeRaw, data = df_pheno, ties = "efron")
+    ##     smokingCat, data = df_pheno, ties = "efron")
     ## 
     ##                                                                                                                                                                                                  coef
-    ## pm25_2010per5                                                                                                                                                                               -0.084814
-    ## ageBaseline                                                                                                                                                                                  0.010640
-    ## sexMale                                                                                                                                                                                      0.018504
-    ## householdIncomeCat31,000 to 51,999                                                                                                                                                           0.128710
-    ## householdIncomeCat52,000 to 100,000                                                                                                                                                         -0.011711
-    ## householdIncomeCatDo not know                                                                                                                                                                0.035798
-    ## householdIncomeCatGreater than 100,000                                                                                                                                                       0.070560
-    ## householdIncomeCatLess than 18,000                                                                                                                                                          -0.014255
-    ## householdIncomeCatPrefer not to answer                                                                                                                                                      -0.018698
-    ## educationA levels/AS levels or equivalent|CSEs or equivalent                                                                                                                                -0.325472
-    ## educationA levels/AS levels or equivalent|NVQ or HND or HNC or equivalent                                                                                                                    0.062123
-    ## educationA levels/AS levels or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                            2.580298
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent                                                                                                                      -0.302004
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent                                                                                                    0.266440
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent                                                                    0.784533
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching            0.987456
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                            0.287766
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                      -0.206814
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                               1.011529
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                              -0.238196
-    ## educationA levels/AS levels or equivalent|Other professional qualifications eg: nursing, teaching                                                                                            0.023601
-    ## educationCollege or University degree                                                                                                                                                       -0.083532
-    ## educationCollege or University degree|A levels/AS levels or equivalent                                                                                                                      -0.132174
-    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent                                                                                          0.175526
-    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent                                                                      -0.372251
-    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching               0.026854
-    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                          0.159999
-    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching -0.256714
-    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                 -0.039988
-    ## educationCollege or University degree|A levels/AS levels or equivalent|Other professional qualifications eg: nursing, teaching                                                               0.371313
-    ## educationCollege or University degree|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                             0.890063
-    ## educationCollege or University degree|NVQ or HND or HNC or equivalent                                                                                                                       -0.438742
-    ## educationCollege or University degree|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                               -0.029665
-    ## educationCollege or University degree|O levels/GCSEs or equivalent                                                                                                                           0.040419
-    ## educationCollege or University degree|O levels/GCSEs or equivalent|CSEs or equivalent                                                                                                       -0.499083
-    ## educationCollege or University degree|O levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                2.133292
-    ## educationCollege or University degree|O levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                0.629590
-    ## educationCollege or University degree|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                          -0.802787
-    ## educationCollege or University degree|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                  -0.282482
-    ## educationCollege or University degree|O levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                  -0.493121
-    ## educationCollege or University degree|Other professional qualifications eg: nursing, teaching                                                                                               -0.155396
-    ## educationCSEs or equivalent                                                                                                                                                                 -0.123255
-    ## educationCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                                                                 -0.034668
-    ## educationCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                                          0.036333
-    ## educationCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                                                         -0.256754
-    ## educationNone of the above                                                                                                                                                                   0.008882
-    ## educationNVQ or HND or HNC or equivalent                                                                                                                                                    -0.080168
-    ## educationNVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                                                            -0.131313
-    ## educationO levels/GCSEs or equivalent                                                                                                                                                       -0.146635
-    ## educationO levels/GCSEs or equivalent|CSEs or equivalent                                                                                                                                     0.165160
-    ## educationO levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                                    -0.477083
-    ## educationO levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                             0.363385
-    ## educationO levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                             0.268009
-    ## educationO levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                                                       -0.227235
-    ## educationO levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                               -0.131571
-    ## educationO levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                                               -0.044017
-    ## educationOther professional qualifications eg: nursing, teaching                                                                                                                            -0.055852
-    ## educationPrefer not to answer                                                                                                                                                                0.001835
-    ## bmi                                                                                                                                                                                         -0.009790
-    ## smokingCatCurrent smoker 1-19 pack year                                                                                                                                                     -0.025954
-    ## smokingCatCurrent smoker unknown pack year                                                                                                                                                   0.069199
-    ## smokingCatNever smoker                                                                                                                                                                       0.155856
-    ## smokingCatPast smoker >19 pack year                                                                                                                                                          0.088884
-    ## smokingCatPast smoker 1-19 pack year                                                                                                                                                         0.093759
-    ## smokingCatPast smoker unknown pack year                                                                                                                                                      0.098163
-    ## exposeSmokeHomeRaw1                                                                                                                                                                          0.077800
-    ## exposeSmokeHomeRaw10                                                                                                                                                                        -0.342895
-    ## exposeSmokeHomeRaw11                                                                                                                                                                         1.250428
-    ## exposeSmokeHomeRaw12                                                                                                                                                                         0.223629
-    ## exposeSmokeHomeRaw14                                                                                                                                                                         0.479748
-    ## exposeSmokeHomeRaw15                                                                                                                                                                        -0.218291
-    ## exposeSmokeHomeRaw2                                                                                                                                                                          0.195480
-    ## exposeSmokeHomeRaw20                                                                                                                                                                         0.425850
-    ## exposeSmokeHomeRaw24                                                                                                                                                                         1.579663
-    ## exposeSmokeHomeRaw25                                                                                                                                                                         0.458290
-    ## exposeSmokeHomeRaw3                                                                                                                                                                         -0.418998
-    ## exposeSmokeHomeRaw30                                                                                                                                                                         0.235862
-    ## exposeSmokeHomeRaw35                                                                                                                                                                        -0.060098
-    ## exposeSmokeHomeRaw4                                                                                                                                                                          0.131883
-    ## exposeSmokeHomeRaw40                                                                                                                                                                         2.723660
-    ## exposeSmokeHomeRaw5                                                                                                                                                                          0.777432
-    ## exposeSmokeHomeRaw50                                                                                                                                                                        -0.904552
-    ## exposeSmokeHomeRaw56                                                                                                                                                                         0.276119
-    ## exposeSmokeHomeRaw6                                                                                                                                                                          0.211892
-    ## exposeSmokeHomeRaw60                                                                                                                                                                         2.034871
-    ## exposeSmokeHomeRaw7                                                                                                                                                                         -0.033808
-    ## exposeSmokeHomeRaw70                                                                                                                                                                        -0.394925
-    ## exposeSmokeHomeRaw8                                                                                                                                                                          0.057497
-    ## exposeSmokeHomeRaw84                                                                                                                                                                         0.785739
-    ## exposeSmokeHomeRaw9                                                                                                                                                                         -2.114671
-    ## exposeSmokeHomeRawDo not know                                                                                                                                                                0.155871
-    ## exposeSmokeHomeRawPrefer not to answer                                                                                                                                                       0.074910
+    ## pm25_2010per5                                                                                                                                                                               -0.141782
+    ## ageBaseline                                                                                                                                                                                  0.007852
+    ## sexMale                                                                                                                                                                                      0.047993
+    ## householdIncomeCat31,000 to 51,999                                                                                                                                                           0.012521
+    ## householdIncomeCat52,000 to 100,000                                                                                                                                                         -0.001635
+    ## householdIncomeCatDo not know                                                                                                                                                                0.009097
+    ## householdIncomeCatGreater than 100,000                                                                                                                                                       0.039685
+    ## householdIncomeCatLess than 18,000                                                                                                                                                          -0.032072
+    ## householdIncomeCatPrefer not to answer                                                                                                                                                      -0.051286
+    ## educationA levels/AS levels or equivalent|CSEs or equivalent                                                                                                                                -0.097310
+    ## educationA levels/AS levels or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                         0.817108
+    ## educationA levels/AS levels or equivalent|NVQ or HND or HNC or equivalent                                                                                                                    0.167925
+    ## educationA levels/AS levels or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                            0.873592
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent                                                                                                                      -0.046041
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent                                                                                                   -0.030024
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent                                                                    1.182616
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching            0.619173
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                            0.362177
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                      -0.157356
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                               0.743599
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                               0.046660
+    ## educationA levels/AS levels or equivalent|Other professional qualifications eg: nursing, teaching                                                                                            0.026236
+    ## educationCollege or University degree                                                                                                                                                        0.069269
+    ## educationCollege or University degree|A levels/AS levels or equivalent                                                                                                                      -0.092839
+    ## educationCollege or University degree|A levels/AS levels or equivalent|NVQ or HND or HNC or equivalent                                                                                       0.549569
+    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent                                                                                          0.187289
+    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent                                                                      -0.482733
+    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching               0.062320
+    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                          0.427032
+    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching  0.022028
+    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                  0.061299
+    ## educationCollege or University degree|A levels/AS levels or equivalent|Other professional qualifications eg: nursing, teaching                                                               0.498647
+    ## educationCollege or University degree|CSEs or equivalent                                                                                                                                    -0.641138
+    ## educationCollege or University degree|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                             1.036947
+    ## educationCollege or University degree|NVQ or HND or HNC or equivalent                                                                                                                       -0.165241
+    ## educationCollege or University degree|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                                0.455216
+    ## educationCollege or University degree|O levels/GCSEs or equivalent                                                                                                                           0.251917
+    ## educationCollege or University degree|O levels/GCSEs or equivalent|CSEs or equivalent                                                                                                        0.040016
+    ## educationCollege or University degree|O levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                2.260873
+    ## educationCollege or University degree|O levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                0.701003
+    ## educationCollege or University degree|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                          -0.585474
+    ## educationCollege or University degree|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                  -0.138305
+    ## educationCollege or University degree|O levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                  -0.246559
+    ## educationCollege or University degree|Other professional qualifications eg: nursing, teaching                                                                                                0.017780
+    ## educationCSEs or equivalent                                                                                                                                                                  0.144395
+    ## educationCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                                                                  0.199246
+    ## educationCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                                          0.121766
+    ## educationCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                                                         -0.281254
+    ## educationNone of the above                                                                                                                                                                   0.144017
+    ## educationNVQ or HND or HNC or equivalent                                                                                                                                                     0.029176
+    ## educationNVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                                                             0.132896
+    ## educationO levels/GCSEs or equivalent                                                                                                                                                        0.052122
+    ## educationO levels/GCSEs or equivalent|CSEs or equivalent                                                                                                                                     0.157484
+    ## educationO levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                                    -0.082510
+    ## educationO levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                             0.880402
+    ## educationO levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                            -0.079359
+    ## educationO levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                                                       -0.053872
+    ## educationO levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                               -0.004029
+    ## educationO levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                                               -0.035637
+    ## educationOther professional qualifications eg: nursing, teaching                                                                                                                             0.077086
+    ## educationPrefer not to answer                                                                                                                                                                0.104340
+    ## bmi                                                                                                                                                                                         -0.008547
+    ## smokingCatCurrent smoker 1-19 pack year                                                                                                                                                     -0.028962
+    ## smokingCatCurrent smoker unknown pack year                                                                                                                                                  -0.056417
+    ## smokingCatNever smoker                                                                                                                                                                       0.108487
+    ## smokingCatPast smoker >19 pack year                                                                                                                                                          0.038155
+    ## smokingCatPast smoker 1-19 pack year                                                                                                                                                         0.053481
+    ## smokingCatPast smoker unknown pack year                                                                                                                                                      0.045724
     ##                                                                                                                                                                                             exp(coef)
-    ## pm25_2010per5                                                                                                                                                                                0.918683
-    ## ageBaseline                                                                                                                                                                                  1.010696
-    ## sexMale                                                                                                                                                                                      1.018676
-    ## householdIncomeCat31,000 to 51,999                                                                                                                                                           1.137360
-    ## householdIncomeCat52,000 to 100,000                                                                                                                                                          0.988357
-    ## householdIncomeCatDo not know                                                                                                                                                                1.036446
-    ## householdIncomeCatGreater than 100,000                                                                                                                                                       1.073109
-    ## householdIncomeCatLess than 18,000                                                                                                                                                           0.985846
-    ## householdIncomeCatPrefer not to answer                                                                                                                                                       0.981476
-    ## educationA levels/AS levels or equivalent|CSEs or equivalent                                                                                                                                 0.722186
-    ## educationA levels/AS levels or equivalent|NVQ or HND or HNC or equivalent                                                                                                                    1.064093
-    ## educationA levels/AS levels or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                           13.201072
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent                                                                                                                       0.739335
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent                                                                                                    1.305309
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent                                                                    2.191384
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching            2.684396
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                            1.333445
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                       0.813171
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                               2.749802
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                               0.788048
-    ## educationA levels/AS levels or equivalent|Other professional qualifications eg: nursing, teaching                                                                                            1.023882
-    ## educationCollege or University degree                                                                                                                                                        0.919861
-    ## educationCollege or University degree|A levels/AS levels or equivalent                                                                                                                       0.876188
-    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent                                                                                          1.191873
-    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent                                                                       0.689181
-    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching               1.027218
-    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                          1.173510
-    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching  0.773589
-    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                  0.960801
-    ## educationCollege or University degree|A levels/AS levels or equivalent|Other professional qualifications eg: nursing, teaching                                                               1.449637
-    ## educationCollege or University degree|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                             2.435282
-    ## educationCollege or University degree|NVQ or HND or HNC or equivalent                                                                                                                        0.644847
-    ## educationCollege or University degree|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                                0.970771
-    ## educationCollege or University degree|O levels/GCSEs or equivalent                                                                                                                           1.041247
-    ## educationCollege or University degree|O levels/GCSEs or equivalent|CSEs or equivalent                                                                                                        0.607087
-    ## educationCollege or University degree|O levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                8.442616
-    ## educationCollege or University degree|O levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                1.876842
-    ## educationCollege or University degree|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                           0.448078
-    ## educationCollege or University degree|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                   0.753910
-    ## educationCollege or University degree|O levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                   0.610717
-    ## educationCollege or University degree|Other professional qualifications eg: nursing, teaching                                                                                                0.856076
-    ## educationCSEs or equivalent                                                                                                                                                                  0.884038
-    ## educationCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                                                                  0.965926
-    ## educationCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                                          1.037001
-    ## educationCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                                                          0.773558
-    ## educationNone of the above                                                                                                                                                                   1.008921
-    ## educationNVQ or HND or HNC or equivalent                                                                                                                                                     0.922961
-    ## educationNVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                                                             0.876943
-    ## educationO levels/GCSEs or equivalent                                                                                                                                                        0.863609
-    ## educationO levels/GCSEs or equivalent|CSEs or equivalent                                                                                                                                     1.179581
-    ## educationO levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                                     0.620591
-    ## educationO levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                             1.438189
-    ## educationO levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                             1.307359
-    ## educationO levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                                                        0.796734
-    ## educationO levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                                0.876717
-    ## educationO levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                                                0.956938
-    ## educationOther professional qualifications eg: nursing, teaching                                                                                                                             0.945679
-    ## educationPrefer not to answer                                                                                                                                                                1.001836
-    ## bmi                                                                                                                                                                                          0.990257
-    ## smokingCatCurrent smoker 1-19 pack year                                                                                                                                                      0.974380
-    ## smokingCatCurrent smoker unknown pack year                                                                                                                                                   1.071649
-    ## smokingCatNever smoker                                                                                                                                                                       1.168658
-    ## smokingCatPast smoker >19 pack year                                                                                                                                                          1.092954
-    ## smokingCatPast smoker 1-19 pack year                                                                                                                                                         1.098295
-    ## smokingCatPast smoker unknown pack year                                                                                                                                                      1.103142
-    ## exposeSmokeHomeRaw1                                                                                                                                                                          1.080907
-    ## exposeSmokeHomeRaw10                                                                                                                                                                         0.709713
-    ## exposeSmokeHomeRaw11                                                                                                                                                                         3.491838
-    ## exposeSmokeHomeRaw12                                                                                                                                                                         1.250608
-    ## exposeSmokeHomeRaw14                                                                                                                                                                         1.615666
-    ## exposeSmokeHomeRaw15                                                                                                                                                                         0.803891
-    ## exposeSmokeHomeRaw2                                                                                                                                                                          1.215895
-    ## exposeSmokeHomeRaw20                                                                                                                                                                         1.530891
-    ## exposeSmokeHomeRaw24                                                                                                                                                                         4.853318
-    ## exposeSmokeHomeRaw25                                                                                                                                                                         1.581368
-    ## exposeSmokeHomeRaw3                                                                                                                                                                          0.657705
-    ## exposeSmokeHomeRaw30                                                                                                                                                                         1.266000
-    ## exposeSmokeHomeRaw35                                                                                                                                                                         0.941673
-    ## exposeSmokeHomeRaw4                                                                                                                                                                          1.140975
-    ## exposeSmokeHomeRaw40                                                                                                                                                                        15.235977
-    ## exposeSmokeHomeRaw5                                                                                                                                                                          2.175878
-    ## exposeSmokeHomeRaw50                                                                                                                                                                         0.404723
-    ## exposeSmokeHomeRaw56                                                                                                                                                                         1.318005
-    ## exposeSmokeHomeRaw6                                                                                                                                                                          1.236014
-    ## exposeSmokeHomeRaw60                                                                                                                                                                         7.651262
-    ## exposeSmokeHomeRaw7                                                                                                                                                                          0.966757
-    ## exposeSmokeHomeRaw70                                                                                                                                                                         0.673731
-    ## exposeSmokeHomeRaw8                                                                                                                                                                          1.059182
-    ## exposeSmokeHomeRaw84                                                                                                                                                                         2.194028
-    ## exposeSmokeHomeRaw9                                                                                                                                                                          0.120673
-    ## exposeSmokeHomeRawDo not know                                                                                                                                                                1.168676
-    ## exposeSmokeHomeRawPrefer not to answer                                                                                                                                                       1.077787
+    ## pm25_2010per5                                                                                                                                                                                0.867811
+    ## ageBaseline                                                                                                                                                                                  1.007883
+    ## sexMale                                                                                                                                                                                      1.049163
+    ## householdIncomeCat31,000 to 51,999                                                                                                                                                           1.012600
+    ## householdIncomeCat52,000 to 100,000                                                                                                                                                          0.998367
+    ## householdIncomeCatDo not know                                                                                                                                                                1.009138
+    ## householdIncomeCatGreater than 100,000                                                                                                                                                       1.040483
+    ## householdIncomeCatLess than 18,000                                                                                                                                                           0.968437
+    ## householdIncomeCatPrefer not to answer                                                                                                                                                       0.950007
+    ## educationA levels/AS levels or equivalent|CSEs or equivalent                                                                                                                                 0.907274
+    ## educationA levels/AS levels or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                         2.263942
+    ## educationA levels/AS levels or equivalent|NVQ or HND or HNC or equivalent                                                                                                                    1.182848
+    ## educationA levels/AS levels or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                            2.395500
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent                                                                                                                       0.955003
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent                                                                                                    0.970422
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent                                                                    3.262899
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching            1.857392
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                            1.436453
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                       0.854400
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                               2.103491
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                               1.047765
+    ## educationA levels/AS levels or equivalent|Other professional qualifications eg: nursing, teaching                                                                                            1.026583
+    ## educationCollege or University degree                                                                                                                                                        1.071725
+    ## educationCollege or University degree|A levels/AS levels or equivalent                                                                                                                       0.911340
+    ## educationCollege or University degree|A levels/AS levels or equivalent|NVQ or HND or HNC or equivalent                                                                                       1.732506
+    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent                                                                                          1.205976
+    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent                                                                       0.617095
+    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching               1.064302
+    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                          1.532701
+    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching  1.022273
+    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                  1.063217
+    ## educationCollege or University degree|A levels/AS levels or equivalent|Other professional qualifications eg: nursing, teaching                                                               1.646493
+    ## educationCollege or University degree|CSEs or equivalent                                                                                                                                     0.526693
+    ## educationCollege or University degree|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                             2.820593
+    ## educationCollege or University degree|NVQ or HND or HNC or equivalent                                                                                                                        0.847689
+    ## educationCollege or University degree|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                                1.576513
+    ## educationCollege or University degree|O levels/GCSEs or equivalent                                                                                                                           1.286489
+    ## educationCollege or University degree|O levels/GCSEs or equivalent|CSEs or equivalent                                                                                                        1.040827
+    ## educationCollege or University degree|O levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                9.591456
+    ## educationCollege or University degree|O levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                2.015774
+    ## educationCollege or University degree|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                           0.556842
+    ## educationCollege or University degree|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                   0.870833
+    ## educationCollege or University degree|O levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                   0.781485
+    ## educationCollege or University degree|Other professional qualifications eg: nursing, teaching                                                                                                1.017939
+    ## educationCSEs or equivalent                                                                                                                                                                  1.155340
+    ## educationCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                                                                  1.220482
+    ## educationCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                                          1.129489
+    ## educationCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                                                          0.754837
+    ## educationNone of the above                                                                                                                                                                   1.154904
+    ## educationNVQ or HND or HNC or equivalent                                                                                                                                                     1.029606
+    ## educationNVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                                                             1.142131
+    ## educationO levels/GCSEs or equivalent                                                                                                                                                        1.053504
+    ## educationO levels/GCSEs or equivalent|CSEs or equivalent                                                                                                                                     1.170562
+    ## educationO levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                                     0.920802
+    ## educationO levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                             2.411868
+    ## educationO levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                             0.923708
+    ## educationO levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                                                        0.947553
+    ## educationO levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                                0.995979
+    ## educationO levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                                                0.964990
+    ## educationOther professional qualifications eg: nursing, teaching                                                                                                                             1.080135
+    ## educationPrefer not to answer                                                                                                                                                                1.109977
+    ## bmi                                                                                                                                                                                          0.991489
+    ## smokingCatCurrent smoker 1-19 pack year                                                                                                                                                      0.971454
+    ## smokingCatCurrent smoker unknown pack year                                                                                                                                                   0.945145
+    ## smokingCatNever smoker                                                                                                                                                                       1.114590
+    ## smokingCatPast smoker >19 pack year                                                                                                                                                          1.038893
+    ## smokingCatPast smoker 1-19 pack year                                                                                                                                                         1.054936
+    ## smokingCatPast smoker unknown pack year                                                                                                                                                      1.046786
     ##                                                                                                                                                                                              se(coef)
-    ## pm25_2010per5                                                                                                                                                                                0.102070
-    ## ageBaseline                                                                                                                                                                                  0.004379
-    ## sexMale                                                                                                                                                                                      0.045540
-    ## householdIncomeCat31,000 to 51,999                                                                                                                                                           0.074517
-    ## householdIncomeCat52,000 to 100,000                                                                                                                                                          0.091323
-    ## householdIncomeCatDo not know                                                                                                                                                                0.097756
-    ## householdIncomeCatGreater than 100,000                                                                                                                                                       0.153468
-    ## householdIncomeCatLess than 18,000                                                                                                                                                           0.059585
-    ## householdIncomeCatPrefer not to answer                                                                                                                                                       0.076042
-    ## educationA levels/AS levels or equivalent|CSEs or equivalent                                                                                                                                 1.014714
-    ## educationA levels/AS levels or equivalent|NVQ or HND or HNC or equivalent                                                                                                                    0.472712
-    ## educationA levels/AS levels or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                            1.016173
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent                                                                                                                       0.221269
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent                                                                                                    0.523338
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent                                                                    1.013605
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching            0.732418
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                            1.014992
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                       0.292896
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                               0.473652
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                               0.227137
-    ## educationA levels/AS levels or equivalent|Other professional qualifications eg: nursing, teaching                                                                                            0.260033
-    ## educationCollege or University degree                                                                                                                                                        0.165267
-    ## educationCollege or University degree|A levels/AS levels or equivalent                                                                                                                       0.486687
-    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent                                                                                          0.201986
-    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent                                                                       0.600682
-    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching               0.315860
-    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                          0.523098
-    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching  0.385577
-    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                  0.182123
-    ## educationCollege or University degree|A levels/AS levels or equivalent|Other professional qualifications eg: nursing, teaching                                                               0.523186
-    ## educationCollege or University degree|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                             1.013923
-    ## educationCollege or University degree|NVQ or HND or HNC or equivalent                                                                                                                        0.473910
-    ## educationCollege or University degree|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                                0.599894
-    ## educationCollege or University degree|O levels/GCSEs or equivalent                                                                                                                           0.317670
-    ## educationCollege or University degree|O levels/GCSEs or equivalent|CSEs or equivalent                                                                                                        0.725468
-    ## educationCollege or University degree|O levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                1.017722
-    ## educationCollege or University degree|O levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                0.599350
-    ## educationCollege or University degree|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                           0.522329
-    ## educationCollege or University degree|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                   0.525095
-    ## educationCollege or University degree|O levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                   0.314853
-    ## educationCollege or University degree|Other professional qualifications eg: nursing, teaching                                                                                                0.219126
-    ## educationCSEs or equivalent                                                                                                                                                                  0.201930
-    ## educationCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                                                                  0.293390
-    ## educationCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                                          0.475024
-    ## educationCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                                                          0.460797
-    ## educationNone of the above                                                                                                                                                                   0.154285
-    ## educationNVQ or HND or HNC or equivalent                                                                                                                                                     0.167712
-    ## educationNVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                                                             0.305298
-    ## educationO levels/GCSEs or equivalent                                                                                                                                                        0.158713
-    ## educationO levels/GCSEs or equivalent|CSEs or equivalent                                                                                                                                     0.292718
-    ## educationO levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                                     0.437550
-    ## educationO levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                             0.727181
-    ## educationO levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                             0.437662
-    ## educationO levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                                                        0.204693
-    ## educationO levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                                0.282831
-    ## educationO levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                                                0.191723
-    ## educationOther professional qualifications eg: nursing, teaching                                                                                                                             0.169491
-    ## educationPrefer not to answer                                                                                                                                                                0.234730
-    ## bmi                                                                                                                                                                                          0.004894
-    ## smokingCatCurrent smoker 1-19 pack year                                                                                                                                                      0.253964
-    ## smokingCatCurrent smoker unknown pack year                                                                                                                                                   0.174957
-    ## smokingCatNever smoker                                                                                                                                                                       0.132393
-    ## smokingCatPast smoker >19 pack year                                                                                                                                                          0.127851
-    ## smokingCatPast smoker 1-19 pack year                                                                                                                                                         0.137376
-    ## smokingCatPast smoker unknown pack year                                                                                                                                                      0.137959
-    ## exposeSmokeHomeRaw1                                                                                                                                                                          0.128062
-    ## exposeSmokeHomeRaw10                                                                                                                                                                         0.339165
-    ## exposeSmokeHomeRaw11                                                                                                                                                                         1.015350
-    ## exposeSmokeHomeRaw12                                                                                                                                                                         1.004955
-    ## exposeSmokeHomeRaw14                                                                                                                                                                         0.513362
-    ## exposeSmokeHomeRaw15                                                                                                                                                                         1.120833
-    ## exposeSmokeHomeRaw2                                                                                                                                                                          0.175444
-    ## exposeSmokeHomeRaw20                                                                                                                                                                         1.010809
-    ## exposeSmokeHomeRaw24                                                                                                                                                                         0.717769
-    ## exposeSmokeHomeRaw25                                                                                                                                                                         0.713895
-    ## exposeSmokeHomeRaw3                                                                                                                                                                          0.342203
-    ## exposeSmokeHomeRaw30                                                                                                                                                                         0.519373
-    ## exposeSmokeHomeRaw35                                                                                                                                                                         0.711875
-    ## exposeSmokeHomeRaw4                                                                                                                                                                          0.380987
-    ## exposeSmokeHomeRaw40                                                                                                                                                                         1.007635
-    ## exposeSmokeHomeRaw5                                                                                                                                                                          0.356234
-    ## exposeSmokeHomeRaw50                                                                                                                                                                         1.005619
-    ## exposeSmokeHomeRaw56                                                                                                                                                                         1.002816
-    ## exposeSmokeHomeRaw6                                                                                                                                                                          0.451276
-    ## exposeSmokeHomeRaw60                                                                                                                                                                         1.006083
-    ## exposeSmokeHomeRaw7                                                                                                                                                                          0.594406
-    ## exposeSmokeHomeRaw70                                                                                                                                                                         0.813421
-    ## exposeSmokeHomeRaw8                                                                                                                                                                          0.459784
-    ## exposeSmokeHomeRaw84                                                                                                                                                                         0.717331
-    ## exposeSmokeHomeRaw9                                                                                                                                                                          1.013507
-    ## exposeSmokeHomeRawDo not know                                                                                                                                                                0.136256
-    ## exposeSmokeHomeRawPrefer not to answer                                                                                                                                                       0.413610
+    ## pm25_2010per5                                                                                                                                                                                0.078889
+    ## ageBaseline                                                                                                                                                                                  0.003327
+    ## sexMale                                                                                                                                                                                      0.035756
+    ## householdIncomeCat31,000 to 51,999                                                                                                                                                           0.060065
+    ## householdIncomeCat52,000 to 100,000                                                                                                                                                          0.075143
+    ## householdIncomeCatDo not know                                                                                                                                                                0.076367
+    ## householdIncomeCatGreater than 100,000                                                                                                                                                       0.136826
+    ## householdIncomeCatLess than 18,000                                                                                                                                                           0.045988
+    ## householdIncomeCatPrefer not to answer                                                                                                                                                       0.063292
+    ## educationA levels/AS levels or equivalent|CSEs or equivalent                                                                                                                                 1.009733
+    ## educationA levels/AS levels or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                         1.008880
+    ## educationA levels/AS levels or equivalent|NVQ or HND or HNC or equivalent                                                                                                                    0.352325
+    ## educationA levels/AS levels or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                            0.589840
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent                                                                                                                       0.178155
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent                                                                                                    0.371905
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent                                                                    0.514641
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching            0.590681
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                            1.009910
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                       0.229938
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                               0.371893
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                               0.184360
+    ## educationA levels/AS levels or equivalent|Other professional qualifications eg: nursing, teaching                                                                                            0.215222
+    ## educationCollege or University degree                                                                                                                                                        0.130478
+    ## educationCollege or University degree|A levels/AS levels or equivalent                                                                                                                       0.427236
+    ## educationCollege or University degree|A levels/AS levels or equivalent|NVQ or HND or HNC or equivalent                                                                                       1.007463
+    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent                                                                                          0.161046
+    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent                                                                       0.514752
+    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching               0.282980
+    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                          0.424414
+    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching  0.323067
+    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                  0.147280
+    ## educationCollege or University degree|A levels/AS levels or equivalent|Other professional qualifications eg: nursing, teaching                                                               0.514328
+    ## educationCollege or University degree|CSEs or equivalent                                                                                                                                     1.008967
+    ## educationCollege or University degree|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                             1.008487
+    ## educationCollege or University degree|NVQ or HND or HNC or equivalent                                                                                                                        0.395875
+    ## educationCollege or University degree|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                                0.463763
+    ## educationCollege or University degree|O levels/GCSEs or equivalent                                                                                                                           0.291013
+    ## educationCollege or University degree|O levels/GCSEs or equivalent|CSEs or equivalent                                                                                                        0.591222
+    ## educationCollege or University degree|O levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                1.010909
+    ## educationCollege or University degree|O levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                0.590647
+    ## educationCollege or University degree|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                           0.461731
+    ## educationCollege or University degree|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                   0.425261
+    ## educationCollege or University degree|O levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                   0.275062
+    ## educationCollege or University degree|Other professional qualifications eg: nursing, teaching                                                                                                0.176150
+    ## educationCSEs or equivalent                                                                                                                                                                  0.151424
+    ## educationCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                                                                  0.221310
+    ## educationCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                                          0.463451
+    ## educationCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                                                          0.395184
+    ## educationNone of the above                                                                                                                                                                   0.116558
+    ## educationNVQ or HND or HNC or equivalent                                                                                                                                                     0.126891
+    ## educationNVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                                                             0.225873
+    ## educationO levels/GCSEs or equivalent                                                                                                                                                        0.121834
+    ## educationO levels/GCSEs or equivalent|CSEs or equivalent                                                                                                                                     0.256681
+    ## educationO levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                                     0.283598
+    ## educationO levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                             0.515477
+    ## educationO levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                             0.323118
+    ## educationO levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                                                        0.159381
+    ## educationO levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                                0.234099
+    ## educationO levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                                                0.154742
+    ## educationOther professional qualifications eg: nursing, teaching                                                                                                                             0.131347
+    ## educationPrefer not to answer                                                                                                                                                                0.180461
+    ## bmi                                                                                                                                                                                          0.003764
+    ## smokingCatCurrent smoker 1-19 pack year                                                                                                                                                      0.073827
+    ## smokingCatCurrent smoker unknown pack year                                                                                                                                                   0.108162
+    ## smokingCatNever smoker                                                                                                                                                                       0.057023
+    ## smokingCatPast smoker >19 pack year                                                                                                                                                          0.045097
+    ## smokingCatPast smoker 1-19 pack year                                                                                                                                                         0.068082
+    ## smokingCatPast smoker unknown pack year                                                                                                                                                      0.069236
     ##                                                                                                                                                                                                  z
-    ## pm25_2010per5                                                                                                                                                                               -0.831
-    ## ageBaseline                                                                                                                                                                                  2.430
-    ## sexMale                                                                                                                                                                                      0.406
-    ## householdIncomeCat31,000 to 51,999                                                                                                                                                           1.727
-    ## householdIncomeCat52,000 to 100,000                                                                                                                                                         -0.128
-    ## householdIncomeCatDo not know                                                                                                                                                                0.366
-    ## householdIncomeCatGreater than 100,000                                                                                                                                                       0.460
-    ## householdIncomeCatLess than 18,000                                                                                                                                                          -0.239
-    ## householdIncomeCatPrefer not to answer                                                                                                                                                      -0.246
-    ## educationA levels/AS levels or equivalent|CSEs or equivalent                                                                                                                                -0.321
-    ## educationA levels/AS levels or equivalent|NVQ or HND or HNC or equivalent                                                                                                                    0.131
-    ## educationA levels/AS levels or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                            2.539
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent                                                                                                                      -1.365
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent                                                                                                    0.509
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent                                                                    0.774
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching            1.348
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                            0.284
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                      -0.706
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                               2.136
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                              -1.049
-    ## educationA levels/AS levels or equivalent|Other professional qualifications eg: nursing, teaching                                                                                            0.091
-    ## educationCollege or University degree                                                                                                                                                       -0.505
-    ## educationCollege or University degree|A levels/AS levels or equivalent                                                                                                                      -0.272
-    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent                                                                                          0.869
-    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent                                                                      -0.620
-    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching               0.085
-    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                          0.306
-    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching -0.666
-    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                 -0.220
-    ## educationCollege or University degree|A levels/AS levels or equivalent|Other professional qualifications eg: nursing, teaching                                                               0.710
-    ## educationCollege or University degree|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                             0.878
-    ## educationCollege or University degree|NVQ or HND or HNC or equivalent                                                                                                                       -0.926
-    ## educationCollege or University degree|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                               -0.049
-    ## educationCollege or University degree|O levels/GCSEs or equivalent                                                                                                                           0.127
-    ## educationCollege or University degree|O levels/GCSEs or equivalent|CSEs or equivalent                                                                                                       -0.688
-    ## educationCollege or University degree|O levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                2.096
-    ## educationCollege or University degree|O levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                1.050
-    ## educationCollege or University degree|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                          -1.537
-    ## educationCollege or University degree|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                  -0.538
-    ## educationCollege or University degree|O levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                  -1.566
-    ## educationCollege or University degree|Other professional qualifications eg: nursing, teaching                                                                                               -0.709
-    ## educationCSEs or equivalent                                                                                                                                                                 -0.610
-    ## educationCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                                                                 -0.118
-    ## educationCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                                          0.076
-    ## educationCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                                                         -0.557
-    ## educationNone of the above                                                                                                                                                                   0.058
-    ## educationNVQ or HND or HNC or equivalent                                                                                                                                                    -0.478
-    ## educationNVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                                                            -0.430
-    ## educationO levels/GCSEs or equivalent                                                                                                                                                       -0.924
-    ## educationO levels/GCSEs or equivalent|CSEs or equivalent                                                                                                                                     0.564
-    ## educationO levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                                    -1.090
-    ## educationO levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                             0.500
-    ## educationO levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                             0.612
-    ## educationO levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                                                       -1.110
-    ## educationO levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                               -0.465
+    ## pm25_2010per5                                                                                                                                                                               -1.797
+    ## ageBaseline                                                                                                                                                                                  2.360
+    ## sexMale                                                                                                                                                                                      1.342
+    ## householdIncomeCat31,000 to 51,999                                                                                                                                                           0.208
+    ## householdIncomeCat52,000 to 100,000                                                                                                                                                         -0.022
+    ## householdIncomeCatDo not know                                                                                                                                                                0.119
+    ## householdIncomeCatGreater than 100,000                                                                                                                                                       0.290
+    ## householdIncomeCatLess than 18,000                                                                                                                                                          -0.697
+    ## householdIncomeCatPrefer not to answer                                                                                                                                                      -0.810
+    ## educationA levels/AS levels or equivalent|CSEs or equivalent                                                                                                                                -0.096
+    ## educationA levels/AS levels or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                         0.810
+    ## educationA levels/AS levels or equivalent|NVQ or HND or HNC or equivalent                                                                                                                    0.477
+    ## educationA levels/AS levels or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                            1.481
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent                                                                                                                      -0.258
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent                                                                                                   -0.081
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent                                                                    2.298
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching            1.048
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                            0.359
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                      -0.684
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                               1.999
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                               0.253
+    ## educationA levels/AS levels or equivalent|Other professional qualifications eg: nursing, teaching                                                                                            0.122
+    ## educationCollege or University degree                                                                                                                                                        0.531
+    ## educationCollege or University degree|A levels/AS levels or equivalent                                                                                                                      -0.217
+    ## educationCollege or University degree|A levels/AS levels or equivalent|NVQ or HND or HNC or equivalent                                                                                       0.545
+    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent                                                                                          1.163
+    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent                                                                      -0.938
+    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching               0.220
+    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                          1.006
+    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching  0.068
+    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                  0.416
+    ## educationCollege or University degree|A levels/AS levels or equivalent|Other professional qualifications eg: nursing, teaching                                                               0.970
+    ## educationCollege or University degree|CSEs or equivalent                                                                                                                                    -0.635
+    ## educationCollege or University degree|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                             1.028
+    ## educationCollege or University degree|NVQ or HND or HNC or equivalent                                                                                                                       -0.417
+    ## educationCollege or University degree|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                                0.982
+    ## educationCollege or University degree|O levels/GCSEs or equivalent                                                                                                                           0.866
+    ## educationCollege or University degree|O levels/GCSEs or equivalent|CSEs or equivalent                                                                                                        0.068
+    ## educationCollege or University degree|O levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                2.236
+    ## educationCollege or University degree|O levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                1.187
+    ## educationCollege or University degree|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                          -1.268
+    ## educationCollege or University degree|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                  -0.325
+    ## educationCollege or University degree|O levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                  -0.896
+    ## educationCollege or University degree|Other professional qualifications eg: nursing, teaching                                                                                                0.101
+    ## educationCSEs or equivalent                                                                                                                                                                  0.954
+    ## educationCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                                                                  0.900
+    ## educationCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                                          0.263
+    ## educationCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                                                         -0.712
+    ## educationNone of the above                                                                                                                                                                   1.236
+    ## educationNVQ or HND or HNC or equivalent                                                                                                                                                     0.230
+    ## educationNVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                                                             0.588
+    ## educationO levels/GCSEs or equivalent                                                                                                                                                        0.428
+    ## educationO levels/GCSEs or equivalent|CSEs or equivalent                                                                                                                                     0.614
+    ## educationO levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                                    -0.291
+    ## educationO levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                             1.708
+    ## educationO levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                            -0.246
+    ## educationO levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                                                       -0.338
+    ## educationO levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                               -0.017
     ## educationO levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                                               -0.230
-    ## educationOther professional qualifications eg: nursing, teaching                                                                                                                            -0.330
-    ## educationPrefer not to answer                                                                                                                                                                0.008
-    ## bmi                                                                                                                                                                                         -2.000
-    ## smokingCatCurrent smoker 1-19 pack year                                                                                                                                                     -0.102
-    ## smokingCatCurrent smoker unknown pack year                                                                                                                                                   0.396
-    ## smokingCatNever smoker                                                                                                                                                                       1.177
-    ## smokingCatPast smoker >19 pack year                                                                                                                                                          0.695
-    ## smokingCatPast smoker 1-19 pack year                                                                                                                                                         0.682
-    ## smokingCatPast smoker unknown pack year                                                                                                                                                      0.712
-    ## exposeSmokeHomeRaw1                                                                                                                                                                          0.608
-    ## exposeSmokeHomeRaw10                                                                                                                                                                        -1.011
-    ## exposeSmokeHomeRaw11                                                                                                                                                                         1.232
-    ## exposeSmokeHomeRaw12                                                                                                                                                                         0.223
-    ## exposeSmokeHomeRaw14                                                                                                                                                                         0.935
-    ## exposeSmokeHomeRaw15                                                                                                                                                                        -0.195
-    ## exposeSmokeHomeRaw2                                                                                                                                                                          1.114
-    ## exposeSmokeHomeRaw20                                                                                                                                                                         0.421
-    ## exposeSmokeHomeRaw24                                                                                                                                                                         2.201
-    ## exposeSmokeHomeRaw25                                                                                                                                                                         0.642
-    ## exposeSmokeHomeRaw3                                                                                                                                                                         -1.224
-    ## exposeSmokeHomeRaw30                                                                                                                                                                         0.454
-    ## exposeSmokeHomeRaw35                                                                                                                                                                        -0.084
-    ## exposeSmokeHomeRaw4                                                                                                                                                                          0.346
-    ## exposeSmokeHomeRaw40                                                                                                                                                                         2.703
-    ## exposeSmokeHomeRaw5                                                                                                                                                                          2.182
-    ## exposeSmokeHomeRaw50                                                                                                                                                                        -0.899
-    ## exposeSmokeHomeRaw56                                                                                                                                                                         0.275
-    ## exposeSmokeHomeRaw6                                                                                                                                                                          0.470
-    ## exposeSmokeHomeRaw60                                                                                                                                                                         2.023
-    ## exposeSmokeHomeRaw7                                                                                                                                                                         -0.057
-    ## exposeSmokeHomeRaw70                                                                                                                                                                        -0.486
-    ## exposeSmokeHomeRaw8                                                                                                                                                                          0.125
-    ## exposeSmokeHomeRaw84                                                                                                                                                                         1.095
-    ## exposeSmokeHomeRaw9                                                                                                                                                                         -2.086
-    ## exposeSmokeHomeRawDo not know                                                                                                                                                                1.144
-    ## exposeSmokeHomeRawPrefer not to answer                                                                                                                                                       0.181
-    ##                                                                                                                                                                                                   p
-    ## pm25_2010per5                                                                                                                                                                               0.40601
-    ## ageBaseline                                                                                                                                                                                 0.01511
-    ## sexMale                                                                                                                                                                                     0.68451
-    ## householdIncomeCat31,000 to 51,999                                                                                                                                                          0.08412
-    ## householdIncomeCat52,000 to 100,000                                                                                                                                                         0.89796
-    ## householdIncomeCatDo not know                                                                                                                                                               0.71422
-    ## householdIncomeCatGreater than 100,000                                                                                                                                                      0.64568
-    ## householdIncomeCatLess than 18,000                                                                                                                                                          0.81092
-    ## householdIncomeCatPrefer not to answer                                                                                                                                                      0.80577
-    ## educationA levels/AS levels or equivalent|CSEs or equivalent                                                                                                                                0.74840
-    ## educationA levels/AS levels or equivalent|NVQ or HND or HNC or equivalent                                                                                                                   0.89544
-    ## educationA levels/AS levels or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                           0.01111
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent                                                                                                                      0.17229
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent                                                                                                   0.61067
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent                                                                   0.43893
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching           0.17759
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                           0.77678
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                      0.48013
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                              0.03271
-    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                              0.29432
-    ## educationA levels/AS levels or equivalent|Other professional qualifications eg: nursing, teaching                                                                                           0.92768
-    ## educationCollege or University degree                                                                                                                                                       0.61325
-    ## educationCollege or University degree|A levels/AS levels or equivalent                                                                                                                      0.78595
-    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent                                                                                         0.38485
-    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent                                                                      0.53545
-    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching              0.93225
-    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                         0.75970
-    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching 0.50554
-    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                 0.82621
-    ## educationCollege or University degree|A levels/AS levels or equivalent|Other professional qualifications eg: nursing, teaching                                                              0.47788
-    ## educationCollege or University degree|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                            0.38003
-    ## educationCollege or University degree|NVQ or HND or HNC or equivalent                                                                                                                       0.35455
-    ## educationCollege or University degree|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                               0.96056
-    ## educationCollege or University degree|O levels/GCSEs or equivalent                                                                                                                          0.89875
-    ## educationCollege or University degree|O levels/GCSEs or equivalent|CSEs or equivalent                                                                                                       0.49149
-    ## educationCollege or University degree|O levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching               0.03607
-    ## educationCollege or University degree|O levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                               0.29351
-    ## educationCollege or University degree|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                          0.12431
-    ## educationCollege or University degree|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                  0.59060
-    ## educationCollege or University degree|O levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                  0.11730
-    ## educationCollege or University degree|Other professional qualifications eg: nursing, teaching                                                                                               0.47822
-    ## educationCSEs or equivalent                                                                                                                                                                 0.54161
-    ## educationCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                                                                 0.90594
-    ## educationCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                                         0.93903
-    ## educationCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                                                         0.57739
-    ## educationNone of the above                                                                                                                                                                  0.95409
-    ## educationNVQ or HND or HNC or equivalent                                                                                                                                                    0.63264
-    ## educationNVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                                                            0.66711
-    ## educationO levels/GCSEs or equivalent                                                                                                                                                       0.35554
-    ## educationO levels/GCSEs or equivalent|CSEs or equivalent                                                                                                                                    0.57260
-    ## educationO levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                                    0.27556
-    ## educationO levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                            0.61727
-    ## educationO levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                            0.54030
-    ## educationO levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                                                       0.26695
-    ## educationO levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                               0.64179
-    ## educationO levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                                               0.81841
-    ## educationOther professional qualifications eg: nursing, teaching                                                                                                                            0.74175
-    ## educationPrefer not to answer                                                                                                                                                               0.99376
-    ## bmi                                                                                                                                                                                         0.04545
-    ## smokingCatCurrent smoker 1-19 pack year                                                                                                                                                     0.91860
-    ## smokingCatCurrent smoker unknown pack year                                                                                                                                                  0.69246
-    ## smokingCatNever smoker                                                                                                                                                                      0.23911
-    ## smokingCatPast smoker >19 pack year                                                                                                                                                         0.48692
-    ## smokingCatPast smoker 1-19 pack year                                                                                                                                                        0.49493
-    ## smokingCatPast smoker unknown pack year                                                                                                                                                     0.47675
-    ## exposeSmokeHomeRaw1                                                                                                                                                                         0.54351
-    ## exposeSmokeHomeRaw10                                                                                                                                                                        0.31202
-    ## exposeSmokeHomeRaw11                                                                                                                                                                        0.21813
-    ## exposeSmokeHomeRaw12                                                                                                                                                                        0.82390
-    ## exposeSmokeHomeRaw14                                                                                                                                                                        0.35004
-    ## exposeSmokeHomeRaw15                                                                                                                                                                        0.84558
-    ## exposeSmokeHomeRaw2                                                                                                                                                                         0.26519
-    ## exposeSmokeHomeRaw20                                                                                                                                                                        0.67354
-    ## exposeSmokeHomeRaw24                                                                                                                                                                        0.02775
-    ## exposeSmokeHomeRaw25                                                                                                                                                                        0.52090
-    ## exposeSmokeHomeRaw3                                                                                                                                                                         0.22080
-    ## exposeSmokeHomeRaw30                                                                                                                                                                        0.64974
-    ## exposeSmokeHomeRaw35                                                                                                                                                                        0.93272
-    ## exposeSmokeHomeRaw4                                                                                                                                                                         0.72922
-    ## exposeSmokeHomeRaw40                                                                                                                                                                        0.00687
-    ## exposeSmokeHomeRaw5                                                                                                                                                                         0.02908
-    ## exposeSmokeHomeRaw50                                                                                                                                                                        0.36839
-    ## exposeSmokeHomeRaw56                                                                                                                                                                        0.78305
-    ## exposeSmokeHomeRaw6                                                                                                                                                                         0.63868
-    ## exposeSmokeHomeRaw60                                                                                                                                                                        0.04312
-    ## exposeSmokeHomeRaw7                                                                                                                                                                         0.95464
-    ## exposeSmokeHomeRaw70                                                                                                                                                                        0.62731
-    ## exposeSmokeHomeRaw8                                                                                                                                                                         0.90048
-    ## exposeSmokeHomeRaw84                                                                                                                                                                        0.27336
-    ## exposeSmokeHomeRaw9                                                                                                                                                                         0.03693
-    ## exposeSmokeHomeRawDo not know                                                                                                                                                               0.25264
-    ## exposeSmokeHomeRawPrefer not to answer                                                                                                                                                      0.85628
+    ## educationOther professional qualifications eg: nursing, teaching                                                                                                                             0.587
+    ## educationPrefer not to answer                                                                                                                                                                0.578
+    ## bmi                                                                                                                                                                                         -2.271
+    ## smokingCatCurrent smoker 1-19 pack year                                                                                                                                                     -0.392
+    ## smokingCatCurrent smoker unknown pack year                                                                                                                                                  -0.522
+    ## smokingCatNever smoker                                                                                                                                                                       1.903
+    ## smokingCatPast smoker >19 pack year                                                                                                                                                          0.846
+    ## smokingCatPast smoker 1-19 pack year                                                                                                                                                         0.786
+    ## smokingCatPast smoker unknown pack year                                                                                                                                                      0.660
+    ##                                                                                                                                                                                                  p
+    ## pm25_2010per5                                                                                                                                                                               0.0723
+    ## ageBaseline                                                                                                                                                                                 0.0183
+    ## sexMale                                                                                                                                                                                     0.1795
+    ## householdIncomeCat31,000 to 51,999                                                                                                                                                          0.8349
+    ## householdIncomeCat52,000 to 100,000                                                                                                                                                         0.9826
+    ## householdIncomeCatDo not know                                                                                                                                                               0.9052
+    ## householdIncomeCatGreater than 100,000                                                                                                                                                      0.7718
+    ## householdIncomeCatLess than 18,000                                                                                                                                                          0.4856
+    ## householdIncomeCatPrefer not to answer                                                                                                                                                      0.4178
+    ## educationA levels/AS levels or equivalent|CSEs or equivalent                                                                                                                                0.9232
+    ## educationA levels/AS levels or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                        0.4180
+    ## educationA levels/AS levels or equivalent|NVQ or HND or HNC or equivalent                                                                                                                   0.6336
+    ## educationA levels/AS levels or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                           0.1386
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent                                                                                                                      0.7961
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent                                                                                                   0.9357
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent                                                                   0.0216
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching           0.2945
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                           0.7199
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                      0.4938
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                              0.0456
+    ## educationA levels/AS levels or equivalent|O levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                              0.8002
+    ## educationA levels/AS levels or equivalent|Other professional qualifications eg: nursing, teaching                                                                                           0.9030
+    ## educationCollege or University degree                                                                                                                                                       0.5955
+    ## educationCollege or University degree|A levels/AS levels or equivalent                                                                                                                      0.8280
+    ## educationCollege or University degree|A levels/AS levels or equivalent|NVQ or HND or HNC or equivalent                                                                                      0.5854
+    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent                                                                                         0.2448
+    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent                                                                      0.3483
+    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching              0.8257
+    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                         0.3143
+    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching 0.9456
+    ## educationCollege or University degree|A levels/AS levels or equivalent|O levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                 0.6773
+    ## educationCollege or University degree|A levels/AS levels or equivalent|Other professional qualifications eg: nursing, teaching                                                              0.3323
+    ## educationCollege or University degree|CSEs or equivalent                                                                                                                                    0.5251
+    ## educationCollege or University degree|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                            0.3038
+    ## educationCollege or University degree|NVQ or HND or HNC or equivalent                                                                                                                       0.6764
+    ## educationCollege or University degree|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                               0.3263
+    ## educationCollege or University degree|O levels/GCSEs or equivalent                                                                                                                          0.3867
+    ## educationCollege or University degree|O levels/GCSEs or equivalent|CSEs or equivalent                                                                                                       0.9460
+    ## educationCollege or University degree|O levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching               0.0253
+    ## educationCollege or University degree|O levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                               0.2353
+    ## educationCollege or University degree|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                          0.2048
+    ## educationCollege or University degree|O levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                  0.7450
+    ## educationCollege or University degree|O levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                  0.3701
+    ## educationCollege or University degree|Other professional qualifications eg: nursing, teaching                                                                                               0.9196
+    ## educationCSEs or equivalent                                                                                                                                                                 0.3403
+    ## educationCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                                                                 0.3680
+    ## educationCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                                         0.7928
+    ## educationCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                                                         0.4766
+    ## educationNone of the above                                                                                                                                                                  0.2166
+    ## educationNVQ or HND or HNC or equivalent                                                                                                                                                    0.8181
+    ## educationNVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                                                            0.5563
+    ## educationO levels/GCSEs or equivalent                                                                                                                                                       0.6688
+    ## educationO levels/GCSEs or equivalent|CSEs or equivalent                                                                                                                                    0.5395
+    ## educationO levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                                    0.7711
+    ## educationO levels/GCSEs or equivalent|CSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                            0.0876
+    ## educationO levels/GCSEs or equivalent|CSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                            0.8060
+    ## educationO levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent                                                                                                                       0.7354
+    ## educationO levels/GCSEs or equivalent|NVQ or HND or HNC or equivalent|Other professional qualifications eg: nursing, teaching                                                               0.9863
+    ## educationO levels/GCSEs or equivalent|Other professional qualifications eg: nursing, teaching                                                                                               0.8179
+    ## educationOther professional qualifications eg: nursing, teaching                                                                                                                            0.5573
+    ## educationPrefer not to answer                                                                                                                                                               0.5631
+    ## bmi                                                                                                                                                                                         0.0232
+    ## smokingCatCurrent smoker 1-19 pack year                                                                                                                                                     0.6948
+    ## smokingCatCurrent smoker unknown pack year                                                                                                                                                  0.6019
+    ## smokingCatNever smoker                                                                                                                                                                      0.0571
+    ## smokingCatPast smoker >19 pack year                                                                                                                                                         0.3975
+    ## smokingCatPast smoker 1-19 pack year                                                                                                                                                        0.4321
+    ## smokingCatPast smoker unknown pack year                                                                                                                                                     0.5090
     ## 
-    ## Likelihood ratio test=90.6  on 92 df, p=0.5218
-    ## n= 2329, number of events= 2329 
-    ##    (479453 observations deleted due to missingness)
+    ## Likelihood ratio test=62.66  on 68 df, p=0.6602
+    ## n= 3583, number of events= 3583 
+    ##    (478199 observations deleted due to missingness)
 
 ## Citations
 

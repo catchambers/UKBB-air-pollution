@@ -4,7 +4,7 @@ output:
   github_document:
     toc: true
     toc_depth: 4
-author: "Caitlyn Chitwood"
+author: "Caitlyn Chitwood - "
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 params:
   condition:
@@ -21,7 +21,7 @@ bibliography: references.bib
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = params$printcode)
 
-libraries <- c("survival", "ggplot2", "rstudioapi", "readr", "dplyr", "data.table",
+libraries <- c("survival", "ggplot2", "readr", "dplyr", "data.table",
                "shiny", "knitr")
 lapply(libraries, require, character.only = TRUE) #load multiple packages
 
@@ -46,8 +46,7 @@ attach(df_pheno)
 
 ```{r summary}
 kable(head(df_pheno),
-      caption = "A table showing first 6 rows of relevant variables.",
-      )
+      caption = "A table showing first 6 rows of relevant variables.")
 ```
 
 There are `r sum(lung_cancer)` cases of lung cancer in the data set.
@@ -242,20 +241,23 @@ rm(mildPM25, extremePM25)
 
 ### Model 1: age and sex covariates only
 
+#### PM2.5 (2010)
 ```{r model-1}
 res.model1 <- coxph(
   Surv(t_lungCancer, lung_cancer) ~  pm25_2010per5 + ageBaseline + sex,
   data = df_pheno,
   ties = "efron"
 )
-res.model1
 ```
+
+#### PM2.5 (2010)
+
 
 ### Model 2: multiple covariates
 
 ```{r model-2}
 res.model2 <- coxph(
-  Surv(t_lungCancer, lung_cancer) ~ pm25_2010per5 + ageBaseline + sex + householdIncomeCat + education + bmi + smokingCat +  exposeSmokeHomeRaw,
+  Surv(t_lungCancer, lung_cancer) ~ pm25_2010per5 + ageBaseline + sex + householdIncomeCat + education + bmi + smokingCat,
   data = df_pheno,
   ties = "efron"
 )
