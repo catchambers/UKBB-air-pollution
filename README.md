@@ -29,7 +29,7 @@ To view the latest stable report, click master.md above.
 - [x] Make bmiCat factor variable (Normal (<25 kg/m2), Overweight (25–29.9 kg/m2), Obesity (>=30 kg/m2, Missing value)
 - [ ] Make pack-years of smoking numeric variable
 - [ ] Simplify education levels. Include each participant in only one level. (Degree level or professional education, Other levels, Missing value)
-- [ ] Simplify householdIncomeCat (Less than £31,000, £31,000 and above, Missing value)
+- [x] Simplify householdIncomeCat (Less than £31,000, £31,000 and above, Missing value)
 - [ ] Simplify smokingCat (Never-smoker, Current or former smoker, Missing value)
 - [ ] Simplify fuel (yes/no gas or solid-fuel cooking/heating in home, Missing value)
 - [ ] Make exposeSmokeHome factor variable. Remove raw variable from model

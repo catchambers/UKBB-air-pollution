@@ -107,10 +107,15 @@ get_data <- function(selection) {
                               bmi > 30 ~ 'Obese'))
 
   ## Define income category ------------------------------------------------
-  # df$incomeCat <- df$householdIncomeCat
-  # Less than 31000
-  # Greater than 31000
-  # NA
+  # Reduce number of levels in householdIncomeCat
+  df <- df %>%
+    mutate(
+      householdIncomeCat = case_when(
+        householdIncomeCat == "18,000 to 30,999" |
+          householdIncomeCat == "Less than 18,000" ~ "Less than 31000",
+        householdIncomeCat == "31,000 to 51,999" |
+          householdIncomeCat == "52,000 to 100,000" |
+          householdIncomeCat == "Greater than 100,000" ~ "Greater than 31000"))
   
   ## Age Category ----------------------------------------------------------
   # df$ageCat
