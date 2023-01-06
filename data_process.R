@@ -97,15 +97,15 @@ get_data <- function(selection) {
   detach(df)
     
   ## Create censor date variable, dateCensor has unexpected values ---------
-  
+  #df %>% censorDate
   
   ## Define bmi category ---------------------------------------------------
-  df %>%
+  df <- df %>%
     mutate(bmiCat = case_when(bmi <= 18.5 ~ 'Underweight',
                               bmi <= 25 ~ 'Normal',
                               bmi <= 30 ~ 'Overweight',
                               bmi > 30 ~ 'Obese'))
-  
+
   ## Define income category ------------------------------------------------
   # df$incomeCat <- df$householdIncomeCat
   # Less than 31000
