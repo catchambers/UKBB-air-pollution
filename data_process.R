@@ -8,7 +8,7 @@ get_data <- function(selection) {
   # Read in Files -----------------------------------------------------------
   prefix <- "C:/Users/Caitlyn/Box/Research/air_pollution/Datasets/"
   
-  # biobank export
+  # Biobank export
   file1 <- paste0(prefix,
                   "ukbbPollutionLung_participant.tsv")
   
@@ -100,12 +100,11 @@ get_data <- function(selection) {
   
   
   ## Define bmi category ---------------------------------------------------
-  # df$bmiCat <- df$bmi
-  # <18.5 Underweight
-  # 18.5-24.9 Normal
-  # 25–29.9 Overweight
-  # >30 Obese
-  # NA
+  df %>%
+    mutate(bmiCat = case_when(bmi <= 18.5 ~ 'Underweight',
+                              bmi <= 25 ~ 'Normal',
+                              bmi <= 30 ~ 'Overweight',
+                              bmi > 30 ~ 'Obese'))
   
   ## Define income category ------------------------------------------------
   # df$incomeCat <- df$householdIncomeCat
@@ -166,9 +165,12 @@ get_data <- function(selection) {
                            )), ]
     
     ### Sort by participant id ----------------------------------------------
-    sorted2 <-
-      sorted1[with(sorted1, order(sorted1$eid, decreasing = FALSE, na.last =
-                                    TRUE)), ]
+    sorted2 <- sorted1[with(sorted1,
+                            order(
+                              sorted1$eid,
+                              decreasing = FALSE,
+                              na.last = TRUE
+                              )), ]
     
     ### Remove rows with duplicate id and return data -----------------------
     return(sorted2[!duplicated(sorted2$eid), ])
