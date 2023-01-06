@@ -22,7 +22,7 @@ bibliography: references.bib
 knitr::opts_chunk$set(echo = params$printcode)
 
 libraries <- c("survival", "ggplot2", "readr", "dplyr", "data.table",
-               "shiny", "knitr")
+               "shiny", "knitr", "summarytools", "rstudioapi")
 lapply(libraries, require, character.only = TRUE) #load multiple packages
 
 source("utils.R")  #load functions
@@ -44,12 +44,36 @@ attach(df_pheno)
 
 ### Summary Statistics
 
-```{r summary}
-kable(head(df_pheno),
-      caption = "A table showing first 6 rows of relevant variables.")
+```{r summary-overall, results="asis"}
+dfSummary(df_pheno, 
+          round.digits = 2,
+          plain.ascii  = FALSE, 
+          style        = "grid", 
+          graph.magnif = 0.65, 
+          valid.col    = FALSE,
+          tmp.img.dir  = "./tmp")
+
+kable(head(df_pheno))
 ```
 
 There are `r sum(lung_cancer)` cases of lung cancer in the data set.
+
+```{r summary-categorical}
+table(householdIncomeCat, useNA = "always")
+
+table(bmiCat, useNA = "always")
+```
+
+Average packages of cigarettes per day multiplied by years smoking: 
+  `r mean(packYear, na.rm = TRUE)`
+
+
+```{r summary-numeric}
+
+
+
+```
+
 
 ### Density Plots
 
