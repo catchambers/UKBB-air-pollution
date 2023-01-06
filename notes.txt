@@ -8,8 +8,11 @@ https://pubmed.ncbi.nlm.nih.gov/32736381/
 Definitions --------------------------------------------------------------
 Prevalent cancers were those diagnosed prior to recruitment to the Biobank study.
 
-Clonal Hematopoiesis
+Clonal Hematopoiesis (CH)
 Expansion of blood cells arising from mutant HEMATOPOIETIC STEM CELLS often related to aging. Mutations on epigenetic regulator genes are common in clonal hematopoiesis and may be a risk factor for HEMATOLOGIC NEOPLASMS and other cardiovascular diseases. When variant allele fraction is at least 2% and is present in the absence of severe cytopenias it is referred to as clonal hematopoiesis of indeterminate potential (CHIP).
+
+Putative Driver (PD)
+Known or hypothesized cancer putative drivers
 
 Methods ------------------------------------------------------------------
 Study Design - Retrospective Case-Control
