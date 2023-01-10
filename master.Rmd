@@ -1,9 +1,10 @@
 ---
 title: "Air Pollution and Health Outcomes in the UK Biobank"
 output:
-  github_document:
+  html_document:
     toc: true
     toc_depth: 4
+    toc_float: true
 author: "Caitlyn Chitwood - "
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 params:
@@ -21,8 +22,19 @@ bibliography: references.bib
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = params$printcode)
 
-libraries <- c("survival", "ggplot2", "readr", "dplyr", "data.table",
-               "shiny", "knitr", "summarytools", "rstudioapi")
+libraries <-
+  c(
+    "survival",
+    "ggplot2",
+    "readr",
+    "dplyr",
+    "data.table",
+    "shiny",
+    "knitr",
+    "summarytools",
+    "rstudioapi"
+  )
+
 lapply(libraries, require, character.only = TRUE) #load multiple packages
 
 source("utils.R")  #load functions
@@ -147,8 +159,8 @@ hist(pm10_2010,
      col="cadetblue",
      freq=FALSE)
 
-hist(pmcourse_2010, 
-     xlab="pmcourse_2010 (μg/m3)",
+hist(pmcoarse_2010, 
+     xlab="pmcoarse_2010 (μg/m3)",
      col="cadetblue",
      freq=FALSE)
 
@@ -281,7 +293,7 @@ res.model1 <- coxph(
 
 ```{r model-2}
 res.model2 <- coxph(
-  Surv(t_lungCancer, lung_cancer) ~ pm25_2010per5 + ageBaseline + sex + householdIncomeCat + education + bmi + smokingCat,
+  Surv(t_lungCancer, lung_cancer) ~ pm25_2010per5 + ageBaseline + sex + householdIncomeCat + educationCat + bmiCat + smokingCat,
   data = df_pheno,
   ties = "efron"
 )
