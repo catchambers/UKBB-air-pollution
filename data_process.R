@@ -60,7 +60,7 @@ get_data <- function(selection) {
       'pm10_2010',
       'pm25Absorb_2010',
       'pm25_2010',
-      'pmcourse_2010',
+      'pmcoarse_2010',
       'no2_2005',
       'no2_2006',
       'no2_2007',
@@ -88,7 +88,7 @@ get_data <- function(selection) {
   df$pm10_2007per10 <- pm10_2007 / 10
   df$pm10_2010per10 <- pm10_2010 / 10
   df$pm25_2010per5 <- pm25_2010 / 5
-  df$pmcourse_2010per5 <- pmcourse_2010 / 5
+  df$pmcoarse_2010per5 <- pmcoarse_2010 / 5
   df$no2_2005per10 <- no2_2005 / 10
   df$no2_2006per10 <- no2_2006 / 10
   df$no2_2007per10 <- no2_2007 / 10
@@ -97,7 +97,11 @@ get_data <- function(selection) {
   detach(df)
     
   ## Create censor date variable, dateCensor has unexpected values ---------
-  #df %>% censorDate
+  # df <- df %>% 
+  # mutate(censorDateNew = case_when( )
+  # dateCutoff chr 2020-02-29
+  # date_of_death (consider NA values) chr 2014-04-20
+  # cancerDate chr 4/6/2004
   
   ## Define bmi category ---------------------------------------------------
   df <- df %>%
@@ -109,26 +113,37 @@ get_data <- function(selection) {
   ## Define income category ------------------------------------------------
   # Reduce number of levels in householdIncomeCat
   df <- df %>%
-    mutate(
-      householdIncomeCat = case_when(
-        householdIncomeCat == "18,000 to 30,999" |
-          householdIncomeCat == "Less than 18,000" ~ "Less than 31000",
-        householdIncomeCat == "31,000 to 51,999" |
-          householdIncomeCat == "52,000 to 100,000" |
-          householdIncomeCat == "Greater than 100,000" ~ "Greater than 31000"))
+    mutate(householdIncomeCat = case_when(
+        householdIncomeCat == "18,000 to 30,999" ~ "Less than 31000",
+        householdIncomeCat == "Less than 18,000" ~ "Less than 31000",
+        householdIncomeCat == "31,000 to 51,999" ~ "Greater than 31000",
+        householdIncomeCat == "52,000 to 100,000" ~ "Greater than 31000",
+        householdIncomeCat == "Greater than 100,000" ~ "Greater than 31000")) 
   
   ## Age Category ----------------------------------------------------------
-  # df$ageCat
-  # Under 60
-  # 60 or Over
+
+  df <- df %>%
+    mutate(ageCat = case_when(
+      ageBaseline < 60 ~ "Under 60",
+      ageBaseline >= 60 ~ "60 or Over"
+    ))
   
   ## Define education level category ---------------------------------------
-  # df$educationCat
-  # Degree or professional education
-  # Other levels
-  # NA
+  df <- df %>% 
+    mutate(eduCat = case_when(
+      grepl('professional', education) ~ 'Degree or professional education',
+      grepl('NVQ', education) ~ 'Degree or professional education',
+      grepl('College', education) ~ 'Degree or professional education',
+      grepl('Prefer not to answer', education) ~ NA,
+      TRUE ~ 'Other levels')) #A levels, O levels, CSEs, None of the above
+
+  df <- df %>% 
+    mutate(eduCat = case_when(
+      grepl('professional', education) ~ 'Degree or professional education',
+      grepl('NVQ', education) ~ 'Degree or professional education',
+      grepl('College', education) ~ 'Degree or professional education',
+      grepl('Prefer not to answer', education) ~ NA))
   
-    
   # Merge Cancer, UKBB Data -------------------------------------------------
   
   ## Exclude variables from merge -------------------------------------------
@@ -142,7 +157,6 @@ get_data <- function(selection) {
   # Clean up environment
   rm(df, cancer, cancer_2)
   gc()
-    
     
   # Filtering ---------------------------------------------------------------
   
