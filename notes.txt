@@ -7,6 +7,7 @@ https://pubmed.ncbi.nlm.nih.gov/32736381/
 
 Definitions --------------------------------------------------------------
 Prevalent cancers were those diagnosed prior to recruitment to the Biobank study.
+Patients with prevalent cancers were filtered out of the data set.
 
 Clonal Hematopoiesis (CH)
 Expansion of blood cells arising from mutant HEMATOPOIETIC STEM CELLS often related to aging. Mutations on epigenetic regulator genes are common in clonal hematopoiesis and may be a risk factor for HEMATOLOGIC NEOPLASMS and other cardiovascular diseases. When variant allele fraction is at least 2% and is present in the absence of severe cytopenias it is referred to as clonal hematopoiesis of indeterminate potential (CHIP).
@@ -14,21 +15,32 @@ Expansion of blood cells arising from mutant HEMATOPOIETIC STEM CELLS often rela
 Putative Driver (PD)
 Known or hypothesized cancer putative drivers
 
+Incident 
+Incidence is limited to new cases only. Only cancers after baseline date when
+participants entered the study are considered.
+
 Methods ------------------------------------------------------------------
 Study Design - Retrospective Case-Control
 
 Study Population - UK Biobank Participants
-  -500,000 participants aged 40–69 years recruited between 2006 and 2010
+  ~500,000 participants aged 40–69 years recruited between 2006 and 2010
   
 Outcomes
-  -Incident lung cancer (replicating results)
-  -Incident clonal hematopoesis
+  - Incident lung cancer (replicating results)
+  - Incident clonal hematopoesis
   
 Statistical Analyses
-  -Cox proportional hazard
+  - Cox proportional hazard
+  - Estimate: Hazard Ratios
+  - Time-on-study is the time-scale. Censor date included earliest of:
+    death date, date of lung cancer diagnosis, date lost to followup, or date
+    of last reported cancer registry data. 
+    
   
 Data Filtering -----------------------------------------------------------
 Excluded individuals with prevalent cancer (either solid tumor or hematologic).
+
+Only included unique participant ID rows after cancer registry data was incorporated and the data set was sorted by phenotype value and cancer date.
 
 Programming References ---------------------------------------------------
 Cox Regression in R:

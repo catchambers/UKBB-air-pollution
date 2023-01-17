@@ -19,6 +19,10 @@ do_setup <- function() {
 # 
 # }
 
+export_excel <- function() {
+  write_xlsx(df_pheno, "C:/Users/Caitlyn/Box/Research/air_pollution/Datasets/archive/df_pheno1.xlsx")
+}
+
 
 render_report = function(input) {
   rmarkdown::render("MyDocument.Rmd", params = "ask")

@@ -32,7 +32,11 @@ libraries <-
     "shiny",
     "knitr",
     "summarytools",
-    "rstudioapi"
+    "rstudioapi",
+    "sjPlot",
+    "writexl",
+    "anytime",
+    "table1"
   )
 
 lapply(libraries, require, character.only = TRUE) #load multiple packages
@@ -70,22 +74,12 @@ kable(head(df_pheno))
 
 There are `r sum(lung_cancer)` cases of lung cancer in the data set.
 
-```{r summary-categorical}
-table(householdIncomeCat, useNA = "always")
-
-table(bmiCat, useNA = "always")
+```{r summary-table1}
+table1(~ ageCat + sex + householdIncomeCat + eduCat + bmiCat + smokingCat, data=df_pheno, overall=c(left="Total"))
 ```
 
 Average packages of cigarettes per day multiplied by years smoking: 
   `r mean(packYear, na.rm = TRUE)`
-
-
-```{r summary-numeric}
-
-
-
-```
-
 
 ### Density Plots
 
@@ -273,6 +267,7 @@ cor(mildPM25$pm25_2010, mildPM25$packYear, use="pairwise.complete.obs")
 rm(mildPM25, extremePM25)
 ```
 
+
 ## Regression: Cox Proportional-Hazards Model
 
 ### Model 1: age and sex covariates only
@@ -280,24 +275,34 @@ rm(mildPM25, extremePM25)
 #### PM2.5 (2010)
 ```{r model-1}
 res.model1 <- coxph(
-  Surv(t_lungCancer, lung_cancer) ~  pm25_2010per5 + ageBaseline + sex,
+  Surv(timeStudy, lung_cancer == 1) ~  pm25_2010per5 + ageBaseline + sex,
   data = df_pheno,
   ties = "efron"
 )
+summary(res.model1)
 ```
+#### SJ Plot
 
-#### PM2.5 (2010)
+```{r SJ-Model1}
+logit_data = res.model1 %>% sjPlot::get_model_data(type="est")
+write_xlsx(logit_data, "master_files/SJ_Plot1")
+```
 
 
 ### Model 2: multiple covariates
 
 ```{r model-2}
 res.model2 <- coxph(
-  Surv(t_lungCancer, lung_cancer) ~ pm25_2010per5 + ageBaseline + sex + householdIncomeCat + educationCat + bmiCat + smokingCat,
+  Surv(timeStudy, lung_cancer == 1) ~ pm25_2010per5 + ageBaseline + sex + householdIncomeCat + eduCat + bmiCat + smokingCat,
   data = df_pheno,
   ties = "efron"
 )
-res.model2
+summary(res.model2)
+```
+#### SJ Plot
+```{r SJ-Model2}
+logit_data2 = res.model2 %>% sjPlot::get_model_data(type="est")
+write_xlsx(logit_data2, "master_files/SJ_Plot2")
 ```
 
 ## Citations
