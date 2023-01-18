@@ -56,9 +56,17 @@ attach(df_pheno)
 
 `r if(params$condition=="LC"){"Lung cancer"} else if(params$condition=="CH"){"Clonal hematopoiesis"}` data was used for the following analyses.
 
-## Descriptive Statistics
 
-### Summary Statistics
+## Summary Statistics
+
+There are `r sum(lung_cancer)` cases of lung cancer in the data set.
+
+```{r summary-table1}
+table1(~ ageCat + sex + householdIncomeCat + eduCat + bmiCat + smokingCat, data=df_pheno, overall=c(left="Total"))
+```
+
+Average packages of cigarettes per day multiplied by years smoking: 
+  `r mean(packYear, na.rm = TRUE)`
 
 ```{r summary-overall, results="asis"}
 dfSummary(df_pheno, 
@@ -72,16 +80,7 @@ dfSummary(df_pheno,
 kable(head(df_pheno))
 ```
 
-There are `r sum(lung_cancer)` cases of lung cancer in the data set.
-
-```{r summary-table1}
-table1(~ ageCat + sex + householdIncomeCat + eduCat + bmiCat + smokingCat, data=df_pheno, overall=c(left="Total"))
-```
-
-Average packages of cigarettes per day multiplied by years smoking: 
-  `r mean(packYear, na.rm = TRUE)`
-
-### Density Plots
+## Density Plots
 
 ```{r density-plot-sex}
 kd_male <- density(na.omit(pm10_2007[sex=="Male"])) #define kernel density
@@ -105,41 +104,8 @@ x2 = na.omit(pm10_2007[ageBaseline<60])
 plot_mult_density("pm10_2007 (blue=60 or over, red=under 60)", x1,x2)
 ```
 
-### Histograms
-
-```{r histogram-age}
-#define data
-x1 = na.omit(pm10_2007[ageBaseline>=60])
-x2 = na.omit(pm10_2007[ageBaseline<60])
-
-#plot two histograms in same graph
-hist(x1, col='red', main='pm10_2007', xlab='(μg/m3)')
-hist(x2, col='green', add=TRUE)
-
-#add legend
-legend('topright', c('60 or Over', 'Under 60'), fill=c('red', 'green'))
-```
-
-```{r histogram}
-hist(pm25_2010, 
-     main="Particulate matter air pollution (pm2.5) 2010",
-     xlab="PM2.5 (μg/m3)",
-     col="cadetblue",
-     freq=FALSE,
-     ylim=c(0,0.7))
-
-#Plot lognormal distribution
-xfit <- seq(min(pm25_2010, na.rm = TRUE),
-            max(pm25_2010, na.rm = TRUE),
-            length = 40)
-yfit <- dlnorm(xfit,
-               meanlog = log(mean(pm25_2010)),
-               sdlog = log(sd(pm25_2010)))
-lines(xfit, yfit, col = "black", lwd = 2)
-
-```
-
-The distribution is right-skewed and appears to be a log normal distribution.
+## Histograms
+### Pollutants
 
 ```{r histogram2, fig.height=7, fig.width=7}
 par(mfrow=c(3,3))
@@ -189,7 +155,8 @@ hist(pm25_2010,
      freq=FALSE)
 ```
 
-### Scatter Plots and Correlation Coefficients: pollutants
+## Scatter Plots
+### Pollutants
 
 ```{r scatterplot-PM10-NO2}
 plot(pm10_2010, no2_2010)
@@ -209,7 +176,7 @@ cor(no1_2010, no2_2010, method="pearson", use="complete.obs")
 cor(no1_2010, no2_2010, method="spearman", use="complete.obs")
 ```
 
-### Scatter Plots and Correlation Coefficients: pollutants and covariates
+### Pollutants and covariates
 
 ```{r correlation}
 cor(pm25_2010, ageBaseline, use="pairwise.complete.obs")
@@ -217,6 +184,7 @@ cor(pm25_2010, bmi, use="pairwise.complete.obs")
 cor(pm25_2010, packYear, use="pairwise.complete.obs")
 ```
 
+## Additional Plots
 ### PM 2.5
 
 #### Box Plot
@@ -267,27 +235,23 @@ cor(mildPM25$pm25_2010, mildPM25$packYear, use="pairwise.complete.obs")
 rm(mildPM25, extremePM25)
 ```
 
-
-## Regression: Cox Proportional-Hazards Model
+## Cox Regression
 
 ### Model 1: age and sex covariates only
 
 #### PM2.5 (2010)
 ```{r model-1-pm25-2010}
-res.model1 <- coxph(
-  Surv(timeStudy, lung_cancer == 1) ~  pm25_2010per5 + ageBaseline + sex,
+res_model_1_pm25_2010 <- coxph(
+  Surv(timeStudy, lung_cancer) ~ pm25_2010per5 + ageBaseline + sex,
   data = df_pheno,
   ties = "efron"
 )
-summary(res.model1)
-```
-#### SJ Plot
+summary(res_model_1_pm25_2010)
 
-```{r SJ-Model1}
-logit_data = res.model1 %>% sjPlot::get_model_data(type="est")
-write_xlsx(logit_data, "master_files/SJ_Plot1")
+sj_data = res_model_1_pm25_2010 %>% sjPlot::get_model_data(type="est")
+sj_data
+write_xlsx(sj_data, "master_files/model1/pm25-2010.xlsx")
 ```
-
 
 ### Model 2: multiple covariates
 
@@ -300,9 +264,9 @@ res_model_2_pm25_2010 <- coxph(
 )
 summary(res_model_2_pm25_2010)
 
-logit_data = res_model_2_pm25_2010 %>% sjPlot::get_model_data(type="est")
-logit_data
-write_xlsx(logit_data, "master_files/SJ_Plot_model-2-pm25-2010")
+sj_data = res_model_2_pm25_2010 %>% sjPlot::get_model_data(type="est")
+sj_data
+write_xlsx(sj_data, "master_files/model2/pm25-2010.xlsx")
 ```
 
 #### PM10 (2010)
@@ -314,8 +278,9 @@ res_model_2_pm10_2010 <- coxph(
 )
 summary(res_model_2_pm10_2010)
 
-logit_data = res_model_2_pm10_2010 %>% sjPlot::get_model_data(type="est")
-write_xlsx(logit_data, "master_files/SJ_Plot_model-2-pm10-2010")
+sj_data = res_model_2_pm10_2010 %>% sjPlot::get_model_data(type="est")
+sj_data
+write_xlsx(sj_data, "master_files/model2/pm10-2010.xlsx")
 ```
 
 #### PM10 (2007)
@@ -328,22 +293,24 @@ res_model_2_pm10_2007 <- coxph(
 )
 summary(res_model_2_pm10_2007)
 
-logit_data = res_model_2_pm10_2007 %>% sjPlot::get_model_data(type="est")
-write_xlsx(logit_data, "master_files/SJ_Plot__model_2_pm10_2007")
+sj_data = res_model_2_pm10_2007 %>% sjPlot::get_model_data(type="est")
+sj_data
+write_xlsx(sj_data, "master_files/model2/pm10-2007.xlsx")
 ```
 
-#### PM Coarse (2007)
+#### PM Coarse (2010)
 
-```{r model-2-pmcoarse-2007}
-res_model_2_pmcoarse_2007 <- coxph(
+```{r model-2-pmcoarse-2010}
+res_model_2_pmcoarse_2010 <- coxph(
   Surv(timeStudy, lung_cancer) ~ pmcoarse_2010per5 + ageBaseline + sex + householdIncomeCat + eduCat + bmiCat + smokingCat + race,
   data = df_pheno,
   ties = "efron"
 )
-summary(res_model_2_pmcoarse_2007)
+summary(res_model_2_pmcoarse_2010)
 
-logit_data = res_model_2_pmcoarse_2007 %>% sjPlot::get_model_data(type="est")
-write_xlsx(logit_data, "master_files/SJ_Plot_model-2-pmcoarse-2007")
+sj_data = res_model_2_pmcoarse_2010 %>% sjPlot::get_model_data(type="est")
+sj_data
+write_xlsx(sj_data, "master_files/model2/pmcoarse-2010.xlsx")
 ```
 
 
@@ -357,8 +324,9 @@ res_model_2_no2_2005 <- coxph(
 )
 summary(res_model_2_no2_2005)
 
-logit_data = res_model_2_no2_2005 %>% sjPlot::get_model_data(type="est")
-write_xlsx(logit_data, "master_files/SJ_Plot_model-2-no2-2005")
+sj_data = res_model_2_no2_2005 %>% sjPlot::get_model_data(type="est")
+sj_data
+write_xlsx(sj_data, "master_files/model2/no2-2005.xlsx")
 ```
 
 #### NO2 (2006)
@@ -371,8 +339,9 @@ res_model_2_no2_2006 <- coxph(
 )
 summary(res_model_2_no2_2006)
 
-logit_data = res_model_2_no2_2006 %>% sjPlot::get_model_data(type="est")
-write_xlsx(logit_data, "master_files/SJ_Plot_model-2-no2-2006")
+sj_data = res_model_2_no2_2006 %>% sjPlot::get_model_data(type="est")
+sj_data
+write_xlsx(sj_data, "master_files/model2/no2-2006.xlsx")
 ```
 
 #### NO2 (2007)
@@ -385,8 +354,9 @@ res_model_2_no2_2007 <- coxph(
 )
 summary(res_model_2_no2_2007)
 
-logit_data = res_model_2_no2_2007 %>% sjPlot::get_model_data(type="est")
-write_xlsx(logit_data, "master_files/SJ_Plot_model-2-no2-2007")
+sj_data = res_model_2_no2_2007 %>% sjPlot::get_model_data(type="est")
+sj_data
+write_xlsx(sj_data, "master_files/model2/no2-2007.xlsx")
 ```
 
 #### NO2 (2010)
@@ -398,8 +368,9 @@ res_model_2_no2_2010 <- coxph(
 )
 summary(res_model_2_no2_2010)
 
-logit_data = res_model_2_no2_2010 %>% sjPlot::get_model_data(type="est")
-write_xlsx(logit_data, "master_files/SJ_Plot_model-2-no2-2010")
+sj_data = res_model_2_no2_2010 %>% sjPlot::get_model_data(type="est")
+sj_data
+write_xlsx(sj_data, "master_files/model2/no2-2010.xlsx")
 
 ```
 
@@ -412,8 +383,9 @@ res_model_2_no1_2010 <- coxph(
 )
 summary(res_model_2_no1_2010)
 
-logit_data = res_model_2_no1_2010 %>% sjPlot::get_model_data(type="est")
-write_xlsx(logit_data, "master_files/SJ_Plot_model-2-no1-2010")
+sj_data = res_model_2_no1_2010 %>% sjPlot::get_model_data(type="est")
+sj_data
+write_xlsx(sj_data, "master_files/model2/no1-2010.xlsx")
 
 ```
 
