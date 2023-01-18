@@ -8,26 +8,21 @@ get_data <- function(selection) {
   # Read in Files -----------------------------------------------------------
   prefix <- "C:/Users/Caitlyn/Box/Research/air_pollution/Datasets/"
   
-  # Biobank export
-  file1 <- paste0(prefix,
-                  "ukbbPollutionLung_participant.tsv")
+  file1 <- paste0(prefix, "ukbbPollutionLung_participant.tsv") # Biobank export
+  file2 <- paste0(prefix, "solid_all_0912.csv") # solid tumors
+  file3 <- paste0(prefix, "meta_data_forCaitlyn.txt") # more demographic data
+  file4 <- paste0(prefix, "heme.csv") # hematologic cancers
   
-  # solid tumors
-  file2 <- paste0(prefix,
-                  "solid_all_0912.csv") 
-  
-  # additional demographic data
-  file3 <- paste0(prefix, 
-                  "meta_data_forCaitlyn.txt")
-  
-  # hematologic cancers
-  file4 <- paste0(prefix, 
-                  "heme.csv") 
-  
-  # CH for 250k, update pending
-  file5 <- paste0(prefix, 
-                  "CH450K_1111.txt")  
+  if (selection == "CH") {
     
+    file5 <- paste0(prefix, "UKBB_Mutation_data.csv")  # CH data
+    chData <- fread(file5) %>%
+      select(c("sample_id","CH"))
+    colnames(chData) = c("eid","CH")
+    rm(file5)
+    
+  }
+  
   ukbb <- read_tsv(file1)
   cancerSolid <- read_csv(file2)
   demo <- read.delim(file3,
@@ -36,8 +31,9 @@ get_data <- function(selection) {
                      dec = ".")
   cancerHeme <- read_csv(file4)
   
+  
   # Clean up environment
-  rm(file1, file2, file3, file4, file5)
+  rm(file1, file2, file3, file4)
     
   # Merge Cancer Data -------------------------------------------------------
   
