@@ -21,6 +21,7 @@ These methods will be extended to review the association between air pollution e
 - sync kbolton-lab/UKBB-air-pollution with catchambers/UKBB-air-pollution
 
 ### Generate a New Report
+- Open data_process.R, change prefix path to match username, save
 - Open master.Rmd in RStudio
 - Click dropdown on Knit, select "Knit with Parameters"
 - Select data to use and whether to include code in output
