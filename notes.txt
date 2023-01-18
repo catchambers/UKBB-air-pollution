@@ -45,3 +45,7 @@ Only included unique participant ID rows after cancer registry data was incorpor
 Programming References ---------------------------------------------------
 Cox Regression in R:
 https://rstudio-pubs-static.s3.amazonaws.com/5896_8f0fed2ccbbd42489276e554a05af87e.html
+
+Collaborators ------------------------------------------------------------
+Xiaoyu Zong in Dr. Yin Cao's lab processed an initial batch of lung cancer cases.
+This data set consisted of approximately half of the UKBB cohort.
