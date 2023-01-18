@@ -51,6 +51,7 @@ These methods will be extended to review the association between air pollution e
 - [ ] Model all pollutants, including genetic components
 - [ ] Tabs for navigating between pollutants
 - [ ] Stratified analyses (Sex, Age, Obesity, Smoking Status, Household Income, Histology)
+- [ ] Consider whether common skin cancers should by included in prior cancer filtering
 
 ## Future Ideas
 - [ ] Explore Genetic Analysis of Time-to-Event phenotypes (GATE) Method to adjust for population structure, sample relatedness, and p-value inflation due to very low-frequency variants and heavily censored phenotypes
