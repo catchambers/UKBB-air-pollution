@@ -61,4 +61,31 @@ plot_mult_density <- function(variable, data1, data2, data3=NULL){
 # plot_mult_density("no1_2010 (blue=Lung Cancer, red=No Lung Cancer)", x1,x2)
 
 # Histogram ---------------------------------------------------------------
+# hist(pm25_2010, 
+#      main="Particulate matter air pollution (pm2.5) 2010",
+#      xlab="PM2.5 (μg/m3)",
+#      col="cadetblue",
+#      freq=FALSE,
+#      ylim=c(0,0.7))
+# 
+# #Plot lognormal distribution
+# xfit <- seq(min(pm25_2010, na.rm = TRUE),
+#             max(pm25_2010, na.rm = TRUE),
+#             length = 40)
+# yfit <- dlnorm(xfit,
+#                meanlog = log(mean(pm25_2010)),
+#                sdlog = log(sd(pm25_2010)))
+# lines(xfit, yfit, col = "black", lwd = 2)
 
+## AGE category overlay
+# #define data
+# x1 = na.omit(pm10_2007[ageBaseline>=60])
+# x2 = na.omit(pm10_2007[ageBaseline<60])
+# 
+# #plot two histograms in same graph
+# hist(x1, col='red', main='pm10_2007', xlab='(μg/m3)')
+# hist(x2, col='green', add=TRUE)
+# 
+# #add legend
+# legend('topright', c('60 or Over', 'Under 60'), fill=c('red', 'green'))
+#The distribution is right-skewed and appears to be a log normal distribution.
