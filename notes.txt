@@ -42,6 +42,11 @@ Excluded individuals with prevalent cancer (either solid tumor or hematologic).
 
 Only included unique participant ID rows after cancer registry data was incorporated and the data set was sorted by phenotype value and cancer date.
 
+Lung Cancer Cases
+4920 - From UKBB cancer registry data
+4577 - After prior cancers removed (including skin cancers)
+4292 - Cases where lung cancer diagnosis is after censor date were removed
+
 Programming References ---------------------------------------------------
 Cox Regression in R:
 https://rstudio-pubs-static.s3.amazonaws.com/5896_8f0fed2ccbbd42489276e554a05af87e.html
