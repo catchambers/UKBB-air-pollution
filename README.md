@@ -4,25 +4,26 @@ This project aims to recreate the following analysis associating long-term air p
 
 These methods will be extended to review the association between air pollution exposure and the risk of developing clonal hematopoesis.
 
-## View Latest Report
-To view the latest stable report, click master.md above.
-
 ## Workflow
 ### Do this once
-- Fork this repository using your personal github account
-- Clone the forked repository to access the codebase on your local machine
+- Fork catchambers/UKBB-air-pollution using your personal github account
+- Alternatively, you can add a branch to kbolton-lab/UKBB-air-pollution with your name
+- Clone the forked repository or branch to access the codebase on your local machine
+
 ### Normal process for starting work
-- Sync personal repository with lab repository
-- Pull down changes
-- Make changes in RStudio
+- Sync personal repository or branch with catchambers/UKBB-air-pollution
+- Pull down changes to local machine
+- Make changes in RStudio, save
 - Commit changes
 - Push to Github
-- Make and accept a pull request to incorporate changes into lab repository
+- Make a pull request to catchambers:master
+- Caitlyn will accept pull request 
+- sync kbolton-lab/UKBB-air-pollution with catchambers/UKBB-air-pollution
 
 ### Generate a New Report
 - Open master.Rmd in RStudio
 - Click dropdown on Knit, select "Knit with Parameters"
-- Enter name and date. Select data to use and whether to include code in output
+- Select data to use and whether to include code in output
 - Once report has been generated, review the temporary HTML
 
 ## Features to add
@@ -30,7 +31,8 @@ To view the latest stable report, click master.md above.
 - [x] Find average pack-years of smoking
 - [x] Simplify education levels. Include each participant in only one level. (Degree level or professional education, Other levels, Missing value)
 - [x] Simplify householdIncomeCat (Less than £31,000, £31,000 and above, Missing value)
-- [ ] Simplify smokingCat (Never-smoker, Current or former smoker, Missing value)
+- [x] Simplify smokingCat (Never-smoker, Current or former smoker, Missing value)
+- [x] Make categorical variables into factors and set reference level
 - [ ] Simplify fuel (yes/no gas or solid-fuel cooking/heating in home, Missing value)
 - [ ] Make exposeSmokeHome factor variable. Remove raw variable from model
 - [ ] histology variable
