@@ -273,7 +273,7 @@ rm(mildPM25, extremePM25)
 ### Model 1: age and sex covariates only
 
 #### PM2.5 (2010)
-```{r model-1}
+```{r model-1-pm25-2010}
 res.model1 <- coxph(
   Surv(timeStudy, lung_cancer == 1) ~  pm25_2010per5 + ageBaseline + sex,
   data = df_pheno,
@@ -291,19 +291,132 @@ write_xlsx(logit_data, "master_files/SJ_Plot1")
 
 ### Model 2: multiple covariates
 
-```{r model-2}
-res.model2 <- coxph(
-  Surv(timeStudy, lung_cancer == 1) ~ pm25_2010per5 + ageBaseline + sex + householdIncomeCat + eduCat + bmiCat + smokingCat,
+#### PM2.5 (2010)
+```{r model-2-pm25-2010}
+res_model_2_pm25_2010 <- coxph(
+  Surv(timeStudy, lung_cancer) ~ pm25_2010per5 + ageBaseline + sex + householdIncomeCat + eduCat + bmiCat + smokingCat + race,
   data = df_pheno,
   ties = "efron"
 )
-summary(res.model2)
+summary(res_model_2_pm25_2010)
+
+logit_data = res_model_2_pm25_2010 %>% sjPlot::get_model_data(type="est")
+logit_data
+write_xlsx(logit_data, "master_files/SJ_Plot_model-2-pm25-2010")
 ```
-#### SJ Plot
-```{r SJ-Model2}
-logit_data2 = res.model2 %>% sjPlot::get_model_data(type="est")
-write_xlsx(logit_data2, "master_files/SJ_Plot2")
+
+#### PM10 (2010)
+```{r model-2-pm10-2010}
+res_model_2_pm10_2010 <- coxph(
+  Surv(timeStudy, lung_cancer) ~ pm10_2010per10 + ageBaseline + sex + householdIncomeCat + eduCat + bmiCat + smokingCat + race,
+  data = df_pheno,
+  ties = "efron"
+)
+summary(res_model_2_pm10_2010)
+
+logit_data = res_model_2_pm10_2010 %>% sjPlot::get_model_data(type="est")
+write_xlsx(logit_data, "master_files/SJ_Plot_model-2-pm10-2010")
 ```
+
+#### PM10 (2007)
+
+```{r model-2-pm10-2007}
+res_model_2_pm10_2007 <- coxph(
+  Surv(timeStudy, lung_cancer) ~ pm10_2007per10 + ageBaseline + sex + householdIncomeCat + eduCat + bmiCat + smokingCat + race,
+  data = df_pheno,
+  ties = "efron"
+)
+summary(res_model_2_pm10_2007)
+
+logit_data = res_model_2_pm10_2007 %>% sjPlot::get_model_data(type="est")
+write_xlsx(logit_data, "master_files/SJ_Plot__model_2_pm10_2007")
+```
+
+#### PM Coarse (2007)
+
+```{r model-2-pmcoarse-2007}
+res_model_2_pmcoarse_2007 <- coxph(
+  Surv(timeStudy, lung_cancer) ~ pmcoarse_2010per5 + ageBaseline + sex + householdIncomeCat + eduCat + bmiCat + smokingCat + race,
+  data = df_pheno,
+  ties = "efron"
+)
+summary(res_model_2_pmcoarse_2007)
+
+logit_data = res_model_2_pmcoarse_2007 %>% sjPlot::get_model_data(type="est")
+write_xlsx(logit_data, "master_files/SJ_Plot_model-2-pmcoarse-2007")
+```
+
+
+#### NO2 (2005)
+
+```{r model-2-no2-2005}
+res_model_2_no2_2005 <- coxph(
+  Surv(timeStudy, lung_cancer) ~ no2_2005per10 + ageBaseline + sex + householdIncomeCat + eduCat + bmiCat + smokingCat + race,
+  data = df_pheno,
+  ties = "efron"
+)
+summary(res_model_2_no2_2005)
+
+logit_data = res_model_2_no2_2005 %>% sjPlot::get_model_data(type="est")
+write_xlsx(logit_data, "master_files/SJ_Plot_model-2-no2-2005")
+```
+
+#### NO2 (2006)
+
+```{r model-2-no2-2006}
+res_model_2_no2_2006 <- coxph(
+  Surv(timeStudy, lung_cancer) ~ no2_2006per10 + ageBaseline + sex + householdIncomeCat + eduCat + bmiCat + smokingCat + race,
+  data = df_pheno,
+  ties = "efron"
+)
+summary(res_model_2_no2_2006)
+
+logit_data = res_model_2_no2_2006 %>% sjPlot::get_model_data(type="est")
+write_xlsx(logit_data, "master_files/SJ_Plot_model-2-no2-2006")
+```
+
+#### NO2 (2007)
+
+```{r model-2-no2-2007}
+res_model_2_no2_2007 <- coxph(
+  Surv(timeStudy, lung_cancer) ~ no2_2007per10 + ageBaseline + sex + householdIncomeCat + eduCat + bmiCat + smokingCat + race,
+  data = df_pheno,
+  ties = "efron"
+)
+summary(res_model_2_no2_2007)
+
+logit_data = res_model_2_no2_2007 %>% sjPlot::get_model_data(type="est")
+write_xlsx(logit_data, "master_files/SJ_Plot_model-2-no2-2007")
+```
+
+#### NO2 (2010)
+```{r model-2-no2-2010}
+res_model_2_no2_2010 <- coxph(
+  Surv(timeStudy, lung_cancer) ~ no2_2010per10 + ageBaseline + sex + householdIncomeCat + eduCat + bmiCat + smokingCat + race,
+  data = df_pheno,
+  ties = "efron"
+)
+summary(res_model_2_no2_2010)
+
+logit_data = res_model_2_no2_2010 %>% sjPlot::get_model_data(type="est")
+write_xlsx(logit_data, "master_files/SJ_Plot_model-2-no2-2010")
+
+```
+
+#### NO1 (2010)
+```{r model-2-no1-2010}
+res_model_2_no1_2010 <- coxph(
+  Surv(timeStudy, lung_cancer) ~ no1_2010per20 + ageBaseline + sex + householdIncomeCat + eduCat + bmiCat + smokingCat + race,
+  data = df_pheno,
+  ties = "efron"
+)
+summary(res_model_2_no1_2010)
+
+logit_data = res_model_2_no1_2010 %>% sjPlot::get_model_data(type="est")
+write_xlsx(logit_data, "master_files/SJ_Plot_model-2-no1-2010")
+
+```
+
 
 ## Citations
 
