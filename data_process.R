@@ -95,7 +95,10 @@ get_data <- function(selection) {
   df$no2_2010per10 <- no2_2010 / 10
   df$no1_2010per20 <- no1_2010 / 20
   detach(df)
-    
+  
+  ## Smoking category ------------------------------------------------------
+  df <- df %>% 
+    mutate(smokingCat = relevel(as.factor(smokingCat), ref = "Never smoker"))
   
   ## Define bmi category ---------------------------------------------------
   df <- df %>%
@@ -103,6 +106,8 @@ get_data <- function(selection) {
                               bmi <= 25 ~ 'Normal',
                               bmi <= 30 ~ 'Overweight',
                               bmi > 30 ~ 'Obese'))
+  df <- df %>% 
+    mutate(bmiCat = relevel(as.factor(bmiCat), ref = "Normal"))
 
   ## Define income category ------------------------------------------------
   # Reduce number of levels in householdIncomeCat
@@ -114,6 +119,9 @@ get_data <- function(selection) {
         householdIncomeCat == "52,000 to 100,000" ~ "Greater than 31000",
         householdIncomeCat == "Greater than 100,000" ~ "Greater than 31000")) 
   
+  df <- df %>% 
+    mutate(householdIncomeCat = relevel(as.factor(householdIncomeCat), ref = "Less than 31000"))
+  
   ## Age Category ----------------------------------------------------------
 
   df <- df %>%
@@ -121,6 +129,10 @@ get_data <- function(selection) {
       ageBaseline < 60 ~ "Under 60",
       ageBaseline >= 60 ~ "60 or Over"
     ))
+  
+  df <- df %>% 
+    mutate(ageCat = relevel(as.factor(ageCat), ref = "Under 60"))
+  
   
   ## Define education level category ---------------------------------------
   df <- df %>% 
@@ -131,6 +143,13 @@ get_data <- function(selection) {
       grepl('Prefer not to answer', education) ~ "",
       TRUE ~ 'Other levels')) %>%
     mutate(eduCat = ifelse(eduCat == "", NA, eduCat))#A levels, O levels, CSEs, None of the above
+  
+  df <- df %>% 
+    mutate(eduCat = relevel(as.factor(eduCat), ref = "Other levels"))
+  
+  ## Race -------------------------------------------------------------------
+  df <- df %>% 
+    mutate(race = relevel(as.factor(race), ref = "White"))
   
   # Merge Cancer, UKBB Data -------------------------------------------------
   
@@ -185,7 +204,7 @@ get_data <- function(selection) {
     sorted3 <- sorted2[!duplicated(sorted2$eid), ]
     #Use distinct() instead?
     
-    ### Censor Date ---------------------------------------------------------
+    ### Date Variables ------------------------------------------------------
     sorted3$cancerDate <- as.Date(anydate(sorted3$cancerDate))
     sorted3$date_of_death <- as.Date(sorted3$date_of_death)
     sorted3$dateCutoff <- as.Date(sorted3$dateCutoff)
@@ -193,8 +212,8 @@ get_data <- function(selection) {
     sorted3$cancerDate_Lung <- as.Date(anydate(sorted3$cancerDate_Lung))
     sorted3$dateAssesment <- as.Date(sorted3$dateAssesment)
     
-    sorted3$censorDateNew <- pmin(sorted3$cancerDate,
-                                  sorted3$date_of_death,
+    ### Censor Date ---------------------------------------------------------
+    sorted3$censorDateNew <- pmin(sorted3$date_of_death,
                                   sorted3$dateCutoff,
                                   sorted3$dateLostFollowUp,
                                   sorted3$cancerDate_Lung,
@@ -203,8 +222,9 @@ get_data <- function(selection) {
     ### LC after censor date ------------------------------------------------
     # Set LC to 0 if diagnosed after censoring
     sorted3 <- sorted3 %>%
-      mutate(lung_cancer = case_when(censorDateNew >= cancerDate_Lung ~ as.numeric(lung_cancer),
-                                     (censorDateNew < cancerDate_Lung ~ 0)))
+      mutate(lung_cancer = case_when(pmin(censorDateNew, cancerDate_Lung) == cancerDate_Lung ~ as.numeric(lung_cancer),
+                                     (pmin(censorDateNew, cancerDate_Lung) == censorDateNew ~ 0),
+                                     TRUE ~ as.numeric(lung_cancer)))
     
     ### Time in Study -------------------------------------------------------
     sorted3$timeStudy <- as.numeric(difftime(sorted3$censorDateNew,
@@ -222,13 +242,13 @@ get_data <- function(selection) {
     # Time in study matched with some rounding differences
     
     # C total cases LC -- 4081
-    # X total cases LC -- 2707
+    # X total cases LC -- 2707 (~half of cohort, so this makes sense)
+      # C had LC, X not in dataset -- 1084
       # X had LC, C had LC -- 2640
       # X had LC, C did not -- 67
       # C had LC, X did not -- 357
-      # C had LC, X not in dataset -- 1084
-         # C: LC date after censorDateNew -- 163 (added code to fix this)
-         # Cancer after baseline and prior to LC --
+        # C: LC date after censorDateNew -- 163 (added code to fix this)
+        # Cancer after baseline and prior to LC --
     
     # C participants that X didn't have in dataset -- 51981
     # X had in dataset, no LC. C didn't have in dataset -- 809
@@ -274,3 +294,4 @@ get_data <- function(selection) {
   rm(merged, sorted1, sorted2, sorted3)
   gc()
 }
+
