@@ -3,3 +3,5 @@
 .RData
 .Ruserdata
 ~$codebook.xlsx
+master_files/
+tmp/
