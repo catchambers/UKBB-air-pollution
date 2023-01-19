@@ -138,7 +138,7 @@ get_data <- function(selection) {
       grepl('College', education) ~ 'Degree or professional education',
       grepl('Prefer not to answer', education) ~ "",
       TRUE ~ 'Other levels')) %>%
-    mutate(eduCat = ifelse(eduCat == "", NA, eduCat))#A levels, O levels, CSEs, None of the above
+    mutate(eduCat = ifelse(eduCat == "", NA, eduCat)) #A levels, O levels, CSEs, None of the above
   
   df <- df %>% 
     mutate(eduCat = relevel(as.factor(eduCat), ref = "Other levels"))
@@ -161,21 +161,19 @@ get_data <- function(selection) {
   rm(df, cancer, cancer2)
   gc()
     
-  # Filtering ---------------------------------------------------------------
-  
-  ## Filter out records with prior cancers ----------------------------------
-  merged <- subset(merged,
-                   subset = merged$prior_cancer == 0,
-                   select = eid:lung_cancer)
   
   # Return Data ----------------------------------------------------------
   
   ## Lung Cancer ------------------------------------------------------------
   if (selection == "LC") {
     
+    ### Filter out records with prior cancers -------------------------------
+    merged <- subset(merged,
+                     subset = merged$prior_cancer == 0,
+                     select = eid:lung_cancer)
+    
+    
     ### Set lung cancer date ------------------------------------------------
-    #merged$cancerDate_Lung[merged$lung_cancer == 1] <- merged$cancerDate
-    #merged$cancerDate_Lung[merged$lung_cancer == 0] <- NA
     merged <- merged %>%
       mutate(cancerDate_Lung = case_when(lung_cancer == 1 ~ as.character(cancerDate),
                                          lung_cancer == 0 ~ NA_character_))
@@ -198,7 +196,6 @@ get_data <- function(selection) {
     
     ### Remove rows with duplicate id ---------------------------------------
     sorted3 <- sorted2[!duplicated(sorted2$eid), ]
-    #Use distinct() instead?
     
     ### Date Variables ------------------------------------------------------
     sorted3$cancerDate <- as.Date(anydate(sorted3$cancerDate))
@@ -230,10 +227,10 @@ get_data <- function(selection) {
     ### Return Data ---------------------------------------------------------
     return(sorted3)
     
-    ### Combine and compare with Xiaoyu's data
-    ukbbPM25 <- readRDS(paste0(prefix, "archive/ukbbPM25Lung.rds")) #Load Xiaoyu's data
-    lung <- merge(sorted3, ukbbPM25, by="eid", all=T)
-    write_xlsx(lung, "C:\\Users\\Caitlyn\\Box\\Research\\air_pollution\\Datasets\\archive\\lung.xlsx")
+    # ### Combine and compare with Xiaoyu's data
+    # ukbbPM25 <- readRDS(paste0(prefix, "archive/ukbbPM25Lung.rds")) #Load Xiaoyu's data
+    # lung <- merge(sorted3, ukbbPM25, by="eid", all=T)
+    # write_xlsx(lung, "C:\\Users\\Caitlyn\\Box\\Research\\air_pollution\\Datasets\\archive\\lung.xlsx")
     
     # Time in study matched with some rounding differences
     
@@ -249,45 +246,20 @@ get_data <- function(selection) {
     # C participants that X didn't have in dataset -- 51981
     # X had in dataset, no LC. C didn't have in dataset -- 809
     
-    # cancerDate_Lung not NA -- 568
+    rm(merged, sorted1, sorted2, sorted3)  # Clean up environment
+    gc()
     
   ## Clonal Hematopoiesis ---------------------------------------------------
+    
   } else if (selection == "CH") {
-    # CH 450K
-    CH1 = fread(paste0(prefix, "ukbb.passed.Irenaeus_script.tsvukbb.review.Irenaeus_script_1_3_2023.tsv")) %>%
-      filter(CH_KB==1) %>%
-      select(c("sample_id","key","CHROM", "POS", "REF", "ALT","VariantClass","Gene","AAchange.y","germline_KB","artifact_KB","CH_KB",
-               "Vardict_gt_AF", "Mutect2_gt_AF","VARIANT_CLASS_VEP","PON_FISHER","Mutect2_CALLER","Mutect2_PASS","Vardict_CALLER","Vardict_PASS",
-               "ch_my_pd","ch_pd","ch_pd2"))
-    colnames(CH1) = c("sample_id","key","CHROM", "POS", "REF", "ALT","consequence","Gene","AAchange","germline_KB","artifact_KB","CH_KB","Vardict_gt_AF",
-                      "Mutect2_gt_AF","VARIANT_CLASS_VEP","PON_FISHER","Mutect2_CALLER","Mutect2_PASS","Vardict_CALLER","Vardict_PASS",
-                      "ch_my_pd","ch_pd","ch_pd2")
     
-    CH2 = fread(paste0(prefix, "ukbb.passed.Irenaeus_script.tsv")) %>%
-      mutate(germline_KB=0,
-             artifact_KB=0,
-             CH_KB=1) %>%
-      select(c("sample_id","key","CHROM", "POS", "REF", "ALT","VariantClass","Gene","AAchange.y","germline_KB","artifact_KB","CH_KB",
-               "Vardict_gt_AF", "Mutect2_gt_AF","VARIANT_CLASS_VEP","PON_FISHER","Mutect2_CALLER","Mutect2_PASS","Vardict_CALLER","Vardict_PASS",
-               "ch_my_pd","ch_pd","ch_pd2"))
-    colnames(CH2) = c("sample_id","key","CHROM", "POS", "REF", "ALT","consequence","Gene","AAchange","germline_KB","artifact_KB","CH_KB","Vardict_gt_AF",
-                      "Mutect2_gt_AF","VARIANT_CLASS_VEP","PON_FISHER","Mutect2_CALLER","Mutect2_PASS","Vardict_CALLER","Vardict_PASS",
-                      "ch_my_pd","ch_pd","ch_pd2")
-    
-    CH = rbind(CH1,CH2) %>% distinct() %>% filter(PON_FISHER<0.05)
-    
-    ### Set diagnosis date --------------------------------------------------
-    
-    ### Sort by diagnosis cancer date ---------------------------------------
-    
-    ### Sort by participant id ----------------------------------------------
-    
-    ### Remove rows with duplicate id and return data -----------------------
+    CH <- left_join(chData, merged, by="eid")
+    CH <- as.data.frame(CH)
+    CH2 <- CH[!duplicated(CH$eid), ] # Remove rows with duplicate id
+    return(CH2)
+    rm(CH, CH2)
+    gc()
     
   }
-  
-  # Clean up environment
-  rm(merged, sorted1, sorted2, sorted3)
-  gc()
 }
 
