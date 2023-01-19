@@ -10,7 +10,7 @@ date: "`r format(Sys.time(), '%B %d, %Y')`"
 params:
   condition:
     label: "Select Condition (LC = Lung Cancer, CH = Clonal Hematopoiesis)"
-    value: "LC"
+    value: "CH"
     input: select
     choices: ["LC", "CH"]
   printcode:
@@ -38,13 +38,14 @@ libraries <-
     "anytime",
     "table1"
   )
-
 lapply(libraries, require, character.only = TRUE) #load multiple packages
 
 source("utils.R")  #load functions
 source("plots.R")  #load functions
 source("data_process.R")  #load functions
 
+eval_LC <- params$condition == "LC"
+eval_CH <- params$condition == "CH"
 ```
 
 ```{r data-processing, include = FALSE}
@@ -54,12 +55,12 @@ attach(df_pheno)
 
 ```
 
-`r if(params$condition=="LC"){"Lung cancer"} else if(params$condition=="CH"){"Clonal hematopoiesis"}` data was used for the following analyses.
+`r if(eval_LC){"Lung cancer"} else if(eval_CH){"Clonal hematopoiesis"}` data was used for the following analyses.
 
 
 ## Summary Statistics
 
-There are `r sum(lung_cancer)` cases of lung cancer in the data set.
+There are `r if(eval_LC){sum(lung_cancer)} else if(eval_CH){sum(CH)}` cases in the data set.
 
 ```{r summary-table1}
 table1(~ ageCat + sex + householdIncomeCat + eduCat + bmiCat + smokingCat, data=df_pheno, overall=c(left="Total"))
@@ -237,10 +238,10 @@ rm(mildPM25, extremePM25)
 
 ## Cox Regression
 
-### Model 1: age and sex covariates only
+### Model 1: age and sex only
 
 #### PM2.5 (2010)
-```{r model-1-pm25-2010}
+```{r model-1-pm25-2010, eval=eval_LC}
 res_model_1_pm25_2010 <- coxph(
   Surv(timeStudy, lung_cancer) ~ pm25_2010per5 + ageBaseline + sex,
   data = df_pheno,
@@ -256,7 +257,7 @@ write_xlsx(sj_data, "master_files/model1/pm25-2010.xlsx")
 ### Model 2: multiple covariates
 
 #### PM2.5 (2010)
-```{r model-2-pm25-2010}
+```{r model-2-pm25-2010, eval=eval_LC}
 res_model_2_pm25_2010 <- coxph(
   Surv(timeStudy, lung_cancer) ~ pm25_2010per5 + ageBaseline + sex + householdIncomeCat + eduCat + bmiCat + smokingCat + race,
   data = df_pheno,
@@ -270,7 +271,7 @@ write_xlsx(sj_data, "master_files/model2/pm25-2010.xlsx")
 ```
 
 #### PM10 (2010)
-```{r model-2-pm10-2010}
+```{r model-2-pm10-2010, eval=eval_LC}
 res_model_2_pm10_2010 <- coxph(
   Surv(timeStudy, lung_cancer) ~ pm10_2010per10 + ageBaseline + sex + householdIncomeCat + eduCat + bmiCat + smokingCat + race,
   data = df_pheno,
@@ -285,7 +286,7 @@ write_xlsx(sj_data, "master_files/model2/pm10-2010.xlsx")
 
 #### PM10 (2007)
 
-```{r model-2-pm10-2007}
+```{r model-2-pm10-2007, eval=eval_LC}
 res_model_2_pm10_2007 <- coxph(
   Surv(timeStudy, lung_cancer) ~ pm10_2007per10 + ageBaseline + sex + householdIncomeCat + eduCat + bmiCat + smokingCat + race,
   data = df_pheno,
@@ -300,7 +301,7 @@ write_xlsx(sj_data, "master_files/model2/pm10-2007.xlsx")
 
 #### PM Coarse (2010)
 
-```{r model-2-pmcoarse-2010}
+```{r model-2-pmcoarse-2010, eval=eval_LC}
 res_model_2_pmcoarse_2010 <- coxph(
   Surv(timeStudy, lung_cancer) ~ pmcoarse_2010per5 + ageBaseline + sex + householdIncomeCat + eduCat + bmiCat + smokingCat + race,
   data = df_pheno,
@@ -316,7 +317,7 @@ write_xlsx(sj_data, "master_files/model2/pmcoarse-2010.xlsx")
 
 #### NO2 (2005)
 
-```{r model-2-no2-2005}
+```{r model-2-no2-2005, eval=eval_LC}
 res_model_2_no2_2005 <- coxph(
   Surv(timeStudy, lung_cancer) ~ no2_2005per10 + ageBaseline + sex + householdIncomeCat + eduCat + bmiCat + smokingCat + race,
   data = df_pheno,
@@ -331,7 +332,7 @@ write_xlsx(sj_data, "master_files/model2/no2-2005.xlsx")
 
 #### NO2 (2006)
 
-```{r model-2-no2-2006}
+```{r model-2-no2-2006, eval=eval_LC}
 res_model_2_no2_2006 <- coxph(
   Surv(timeStudy, lung_cancer) ~ no2_2006per10 + ageBaseline + sex + householdIncomeCat + eduCat + bmiCat + smokingCat + race,
   data = df_pheno,
@@ -346,7 +347,7 @@ write_xlsx(sj_data, "master_files/model2/no2-2006.xlsx")
 
 #### NO2 (2007)
 
-```{r model-2-no2-2007}
+```{r model-2-no2-2007, eval=eval_LC}
 res_model_2_no2_2007 <- coxph(
   Surv(timeStudy, lung_cancer) ~ no2_2007per10 + ageBaseline + sex + householdIncomeCat + eduCat + bmiCat + smokingCat + race,
   data = df_pheno,
@@ -360,7 +361,7 @@ write_xlsx(sj_data, "master_files/model2/no2-2007.xlsx")
 ```
 
 #### NO2 (2010)
-```{r model-2-no2-2010}
+```{r model-2-no2-2010, eval=eval_LC}
 res_model_2_no2_2010 <- coxph(
   Surv(timeStudy, lung_cancer) ~ no2_2010per10 + ageBaseline + sex + householdIncomeCat + eduCat + bmiCat + smokingCat + race,
   data = df_pheno,
@@ -375,7 +376,7 @@ write_xlsx(sj_data, "master_files/model2/no2-2010.xlsx")
 ```
 
 #### NO1 (2010)
-```{r model-2-no1-2010}
+```{r model-2-no1-2010, eval=eval_LC}
 res_model_2_no1_2010 <- coxph(
   Surv(timeStudy, lung_cancer) ~ no1_2010per20 + ageBaseline + sex + householdIncomeCat + eduCat + bmiCat + smokingCat + race,
   data = df_pheno,
