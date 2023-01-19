@@ -38,14 +38,14 @@ These methods will be extended to review the association between air pollution e
 - [ ] Make exposeSmokeHome factor variable. Remove raw variable from model
 - [ ] histology variable
 - [ ] Include genetic component variables
-- [ ] Table of population characteristics using table1
+- [x] Table of population characteristics using table1
 - [ ] Incidence rate of phenotype
-- [ ] Number of subjects excluded during filtering
+- [x] Number of subjects excluded during filtering
 - [ ] Distributions of all relevant variables
 - [ ] Pearson correlation coefficients between pollutants
 - [ ] Pearson correlation coefficients between covariates
 - [ ] Data processing for CH (CH missing if exome failed. CH-PD = CH=1 & PD=1)
-- [ ] Update CH file when latest results become available (200k participants currently)
+- [x] Update CH file when latest results become available (200k participants currently)
 - [ ] Test running on cluster. Update file paths as needed
 - [ ] Lung PRS - ask Xiaoyu for this data
 - [ ] Check for violation of proportional hazard (constant HR over time)
