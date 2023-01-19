@@ -7,7 +7,7 @@ https://pubmed.ncbi.nlm.nih.gov/32736381/
 
 Definitions --------------------------------------------------------------
 Prevalent cancers were those diagnosed prior to recruitment to the Biobank study.
-Patients with prevalent cancers were filtered out of the data set.
+Patients with prevalent cancers were filtered out of the lung cancer data set. CH status is not influenced by prior cancer status.
 
 Clonal Hematopoiesis (CH)
 Expansion of blood cells arising from mutant HEMATOPOIETIC STEM CELLS often related to aging. Mutations on epigenetic regulator genes are common in clonal hematopoiesis and may be a risk factor for HEMATOLOGIC NEOPLASMS and other cardiovascular diseases. When variant allele fraction is at least 2% and is present in the absence of severe cytopenias it is referred to as clonal hematopoiesis of indeterminate potential (CHIP).
