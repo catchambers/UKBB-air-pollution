@@ -4,22 +4,6 @@ This project aims to recreate the following analysis associating long-term air p
 
 These methods will be extended to review the association between air pollution exposure and the risk of developing clonal hematopoesis.
 
-## Workflow
-### Do this once
-- Fork catchambers/UKBB-air-pollution using your personal github account
-- Alternatively, you can add a branch to kbolton-lab/UKBB-air-pollution with your name
-- Clone the forked repository or branch to access the codebase on your local machine
-
-### Normal process for starting work
-- Sync personal repository or branch with catchambers/UKBB-air-pollution
-- Pull down changes to local machine
-- Make changes in RStudio, save
-- Commit changes
-- Push to Github
-- Make a pull request to catchambers:master
-- Caitlyn will accept pull request 
-- sync kbolton-lab/UKBB-air-pollution with catchambers/UKBB-air-pollution
-
 ### Generate a New Report
 - Open data_process.R, change prefix path to match username, save
 - Open master.Rmd in RStudio
