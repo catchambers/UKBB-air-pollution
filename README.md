@@ -1,8 +1,9 @@
 # Air Pollution and Health Outcomes in the UK Biobank
-This project aims to recreate the following analysis associating long-term air pollution exposure with lung cancer risk: 
+This project initially aimed to recreate the following analysis associating long-term air pollution exposure with lung cancer risk: 
 [Huang et al., “Air Pollution, Genetic Factors, and the Risk of Lung Cancer.”](https://www.atsjournals.org/doi/10.1164/rccm.202011-4063OC)
+Replication of results was successful. 
 
-These methods will be extended to review the association between air pollution exposure and the risk of developing clonal hematopoiesis.
+These analyses were extended to review the association between air pollution exposure and the risk of developing clonal hematopoiesis.
 
 ### Generate a New Report
 - Open data_process.R, change prefix path to match username, save
