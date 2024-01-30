@@ -2,14 +2,14 @@
 This project aims to recreate the following analysis associating long-term air pollution exposure with lung cancer risk: 
 [Huang et al., “Air Pollution, Genetic Factors, and the Risk of Lung Cancer.”](https://www.atsjournals.org/doi/10.1164/rccm.202011-4063OC)
 
-These methods will be extended to review the association between air pollution exposure and the risk of developing clonal hematopoesis.
+These methods will be extended to review the association between air pollution exposure and the risk of developing clonal hematopoiesis.
 
 ### Generate a New Report
 - Open data_process.R, change prefix path to match username, save
 - Open master.Rmd in RStudio
-- Click dropdown on Knit, select "Knit with Parameters"
-- Select data to use and whether to include code in output
-- Once report has been generated, review the temporary HTML
+- Click the dropdown on Knit, select "Knit with Parameters"
+- Select data to use and whether to include code in the output
+- Once the report has been generated, review the temporary HTML
 
 ## Features to add
 - [x] Make bmiCat factor variable (Normal (<25 kg/m2), Overweight (25–29.9 kg/m2), Obesity (>=30 kg/m2, Missing value)
@@ -19,7 +19,7 @@ These methods will be extended to review the association between air pollution e
 - [x] Simplify smokingCat (Never-smoker, Current or former smoker, Missing value)
 - [x] Make categorical variables into factors and set reference level
 - [ ] Simplify fuel (yes/no gas or solid-fuel cooking/heating in home, Missing value)
-- [ ] Make exposeSmokeHome factor variable. Remove raw variable from model
+- [ ] Make exposeSmokeHome factor variable. Remove raw variable from the model
 - [ ] histology variable
 - [ ] Include genetic component variables
 - [x] Table of population characteristics using table1
@@ -29,14 +29,14 @@ These methods will be extended to review the association between air pollution e
 - [ ] Pearson correlation coefficients between pollutants
 - [ ] Pearson correlation coefficients between covariates
 - [ ] Data processing for CH (CH missing if exome failed. CH-PD = CH=1 & PD=1)
-- [x] Update CH file when latest results become available (200k participants currently)
-- [ ] Test running on cluster. Update file paths as needed
+- [x] Update CH file when the latest results become available (200k participants currently)
+- [ ] Test running on a cluster. Update file paths as needed
 - [ ] Lung PRS - ask Xiaoyu for this data
 - [ ] Check for violation of proportional hazard (constant HR over time)
 - [ ] Model all pollutants, including genetic components
 - [ ] Tabs for navigating between pollutants
 - [ ] Stratified analyses (Sex, Age, Obesity, Smoking Status, Household Income, Histology)
-- [ ] Consider whether common skin cancers should by included in prior cancer filtering
+- [ ] Consider whether common skin cancers should be included in prior cancer filtering
 
 ## Future Ideas
 - [ ] Explore Genetic Analysis of Time-to-Event phenotypes (GATE) Method to adjust for population structure, sample relatedness, and p-value inflation due to very low-frequency variants and heavily censored phenotypes
